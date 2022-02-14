@@ -8,7 +8,7 @@ const CreateRoom = (props) => {
     const userWidth = window.screen.width * 0.15;
 
     window.open(
-      'http://mitoshop.co.kr/',
+      './Chooseshop',
       'zz1',
       `width=${shopWidth}, left=${userWidth},top=0,height=10000, scrollbars=yes, resizable, status=yes, menubar=yes, titlebar=yes`,
       'target'
@@ -20,7 +20,12 @@ const CreateRoom = (props) => {
       `width=${userWidth}, top=0, left=-10000, height=600, scrollbars=yes, resizable=no`,
       'target'
     );
-    // !props.history.push(`/room/${id}`);
+		window.open(
+			"./holymoly.html",
+			"zz2",
+			`width=${shopWidth}, left=${userWidth},top=100000,height=200, scrollbars=yes, resizable, status=yes, menubar=yes, titlebar=yes`,
+			"target"
+	);
   }
 
   return (
