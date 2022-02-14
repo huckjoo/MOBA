@@ -14,11 +14,11 @@ const Room = () => {
     const userStream = useRef();
     const senders = useRef([]);
     const mobaBtn = useRef();
-
     //new
     const urlBtn = useRef();
     const wishListBtn = useRef();
     const roomID = useParams().roomID;
+    console.log(useParams());
     React.useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({ audio: true, video: true }) // 사용자의 media data를 stream으로 받아옴(video, audio)
