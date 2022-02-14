@@ -4,7 +4,25 @@ import styles from './CreateRoom.module.css';
 const CreateRoom = (props) => {
   function create() {
     const id = uuid();
-    props.history.push(`/room/${id}`);
+    const shopWidth = window.screen.width * 0.85;
+    const userWidth = window.screen.width * 0.15;
+
+    window.open(
+      'http://mitoshop.co.kr/',
+      'zz1',
+      `width=${shopWidth}, left=${userWidth},top=0,height=10000, scrollbars=yes, resizable, status=yes, menubar=yes, titlebar=yes`,
+      'target'
+      // option_1
+    );
+
+    window.open(
+      `/room/${id}`,
+      `zz`,
+      `width=${userWidth}, top=0, left=-10000, height=600, scrollbars=yes, resizable=no`,
+      'target'
+      // option_2
+    );
+    // props.history.push(`/room/${id}`);
   }
 
   return (

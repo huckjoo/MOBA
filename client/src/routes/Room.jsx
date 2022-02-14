@@ -1,8 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import io from 'socket.io-client';
-import Footer from '../components/footer/Footer';
 import Header from '../components/header/Header';
-import Iframe from '../components/iframe/Iframe';
 import styles from './Room.module.css';
 // 이 props에는 어떤 정보가 들어가지? 찍어보니까 history, location, url, path등의 정보를 받음
 const Room = (props) => {
@@ -175,34 +173,30 @@ const Room = (props) => {
     <>
       <section className={styles.frame}>
         <Header />
-        <div className={styles.container}>
-          <Iframe />
-          <div className={styles.webcam__box}>
-            <button
-              ref={mobaBtn}
-              className={styles.mobaBtn}
-              onClick={shareScreen}
-            >
-              화면공유
-            </button>
-            <video
-              width="340"
-              height="257"
-              className={styles.video__control}
-              autoPlay
-              ref={userVideo}
-            />
-            <video
-              controls
-              width="340"
-              height="257"
-              className={styles.video__control}
-              autoPlay
-              ref={partnerVideo}
-            />
-          </div>
+        <div className={styles.webcam__box}>
+          <button
+            ref={mobaBtn}
+            className={styles.mobaBtn}
+            onClick={shareScreen}
+          >
+            화면공유
+          </button>
+          <video
+            width="200"
+            height="151"
+            className={styles.video__control}
+            autoPlay
+            ref={userVideo}
+          />
+          <video
+            controls
+            width="200"
+            height="151"
+            className={styles.video__control}
+            autoPlay
+            ref={partnerVideo}
+          />
         </div>
-        <Footer />
       </section>
     </>
   );
