@@ -23,7 +23,7 @@ export default function (SpecificComponent, option, adminRoute = null) {
             navigate('/')
           }
         } else {
-          navigate('/shops')
+          navigate('/createroom')
         }
       });
     }, []);

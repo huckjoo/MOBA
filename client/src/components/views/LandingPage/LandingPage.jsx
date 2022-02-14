@@ -9,7 +9,7 @@ function LandingPage() {
 
   useEffect(() => {
     axios.get('/').then((response) => {
-      console.log('메인 랜딩 페이지입니다.');
+      console.log('시작 페이지입니다.');
     });
   }, []);
 

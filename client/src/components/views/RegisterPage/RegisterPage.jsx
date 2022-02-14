@@ -49,7 +49,7 @@ function RegisterPage(props) {
     dispatch(registerUser(body)).then((response) => {
       console.log(response.payload);
       if (response.payload.success) {
-        navigate('/shops');
+        navigate('/');
       } else {
         alert('회원가입에 실패하였습니다.');
       }
