@@ -20,7 +20,7 @@ const CreateRoom = (props) => {
       `width=${userWidth}, top=0, left=-10000, height=600, scrollbars=yes, resizable=no`,
       'target'
     );
-    // props.history.push(`/room/${id}`);
+    // !props.history.push(`/room/${id}`);
   }
 
   return (
