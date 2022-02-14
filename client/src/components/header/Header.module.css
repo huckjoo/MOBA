@@ -1,0 +1,24 @@
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: black;
+  position: fixed;
+  top: 0px;
+}
+
+.title {
+  all: unset;
+}
+.title {
+  font-size: 40px;
+  font-weight: 700;
+  margin-left: 0.5em;
+  padding: 0.3em;
+  color: #f37423;
+}
+.title:hover {
+  text-decoration: none;
+  color: #f37423;
+  cursor: pointer;
+}
