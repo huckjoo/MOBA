@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { loginUser } from '../../../_actions/user_action';
-import { useNavigate } from 'react-router-dom';
-import Auth from '../../../hoc/auth';
-import Header from '../../header/Header';
-import styles from './LoginPage.module.css';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../../_actions/user_action";
+import { useNavigate } from "react-router-dom";
+import Auth from "../../../hoc/auth";
+import Header from "../../header/Header";
+import styles from "./LoginPage.module.css";
 
 function LoginPage(props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [Username, setUsername] = useState('');
-  const [Password, setPassword] = useState('');
+  const [Username, setUsername] = useState("");
+  const [Password, setPassword] = useState("");
 
   const onUsernameHandler = (event) => {
     setUsername(event.currentTarget.value);
@@ -29,9 +28,9 @@ function LoginPage(props) {
 
     dispatch(loginUser(body)).then((response) => {
       if (response.payload.loginSuccess) {
-        navigate('/createroom');
+        navigate("/createroom");
       } else {
-        alert('아이디와 비밀번호를 확인해주세요.');
+        alert("아이디와 비밀번호를 확인해주세요.");
       }
     });
   };
@@ -72,4 +71,4 @@ function LoginPage(props) {
   );
 }
 
-export default Auth(LoginPage, 'login');
+export default Auth(LoginPage, "login");
