@@ -12,7 +12,6 @@ const CreateRoom = (props) => {
       'zz1',
       `width=${shopWidth}, left=${userWidth},top=0,height=10000, scrollbars=yes, resizable, status=yes, menubar=yes, titlebar=yes`,
       'target'
-      // option_1
     );
 
     window.open(
@@ -20,7 +19,6 @@ const CreateRoom = (props) => {
       `zz`,
       `width=${userWidth}, top=0, left=-10000, height=600, scrollbars=yes, resizable=no`,
       'target'
-      // option_2
     );
     // props.history.push(`/room/${id}`);
   }
