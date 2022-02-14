@@ -38,10 +38,12 @@
 
 .video__control {
   margin: 0;
-  /* border: 2px solid white; */
   border-radius: 10px;
   margin-bottom: 2em;
   margin-top: 1em;
+  /* transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg); */
 }
 .mobaBtn {
   background-color: #f37423;
@@ -67,4 +69,7 @@
   border-radius: 8px;
   font-size: 1.4rem;
   font-weight: 600;
+}
+.mobaBtn:hover {
+  cursor: pointer;
 }
