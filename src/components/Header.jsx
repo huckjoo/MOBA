@@ -27,6 +27,7 @@ const AddToWishlistBtn = () => {
     }
     axios
       .post("http://192.249.29.17:3000/room/1/wishlist", { url })
+      // .post("localhost:3000/room/1/wishlist", { url })
       .then(Response => {
         console.log("post : ", Response.data);
         console.log(Response.status);

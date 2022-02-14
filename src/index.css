@@ -181,6 +181,31 @@ code {
   cursor: default;
 }
 
+/* .check-icon {
+  position: absolute;
+  color: #8bc34a;
+  top: 25%;
+  left: 20%;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 8em;
+  background-color: #1b1a20; 
+  border: 0.5px solid white; 
+  cursor: default;
+  opacity: 0.8;
+  z-index: 11;
+} */
+
+.product-checkbox {
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+
+  padding: 10px;
+  margin-right: 10px;
+}
+
 .product-item button {
   background: #272727;
   border: none;
@@ -190,12 +215,19 @@ code {
   cursor: pointer;
 }
 .product-item-img {
-  /* width: 100%; */
-  object-fit: fill;
-  height: 200px;
+  width: 100%;
+  object-fit: cover;
+  height: 30vh;
   justify-content: space-between;
   margin: 0 auto;
 }
+
+.container-img:hover {
+  width: 100%;
+  justify-content: space-between;
+  opacity: 0.4;
+}
+
 /* .product-item-img:hover {
   width: 100%;
   justify-content: space-between;
@@ -240,6 +272,7 @@ code {
   color: black;
   font-weight: 800;
   cursor: pointer;
+  z-index: 10;
 }
 
 /* .item-delete {
