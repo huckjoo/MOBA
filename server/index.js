@@ -9,6 +9,7 @@ const config = require("./config/key");
 const User = require("./models/User");
 const { auth } = require("./middleware/auth");
 const roomRouter = require('./router/room');
+const basketRouter = require('./router/privatebasket');
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(cookieParser());
 ///// 공유 위시리스트 관련 코드 /////
 app.use('/room', roomRouter);
 //////////////////////////////
+///// 개인 장바구니 라우팅 /////
+app.use('/privatebasket', basketRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
