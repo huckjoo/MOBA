@@ -67,6 +67,7 @@ function RegisterPage(props) {
             </div>
             <form className={styles.loginForm} onSubmit={onSubmitHandler}>
               <input
+                autoFocus
                 className={styles.inputs}
                 type="text"
                 value={Username}

@@ -5,6 +5,7 @@
   background-color: black;
   position: fixed;
   top: 0px;
+  z-index: 21;
 }
 
 .title {
