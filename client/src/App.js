@@ -10,6 +10,7 @@ import RegisterPage from "./components/views/RegisterPage/RegisterPage";
 import Room from "../src/components/views/RoomPage/Room";
 
 function App() {
+  document.body.style.backgroundColor = "black";
   return (
     <Router>
       <div>

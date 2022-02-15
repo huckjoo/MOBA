@@ -1,20 +1,23 @@
 .productContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: stretch;
 }
 
 /* Products */
 .productItem {
   width: 20%;
   position: relative;
-  /* margin-bottom: 2rem; */
   margin: 1rem;
   text-align: center;
   border: 1px solid black;
   background-color: white;
   padding: 5px;
   border-radius: 1.5%;
+  flex: 0 0 auto;
+
+  align-content: space-between;
 }
 
 .productDelete {
@@ -39,22 +42,8 @@
   background-color: #1b1a20;
   border: 0.5px solid white;
   cursor: default;
+  z-index: 1;
 }
-
-/* .check-icon {
-  position: absolute;
-  color: #8bc34a;
-  top: 25%;
-  left: 20%;
-  padding-left: 5px;
-  padding-right: 5px;
-  font-size: 8em;
-  background-color: #1b1a20; 
-  border: 0.5px solid white; 
-  cursor: default;
-  opacity: 0.8;
-  z-index: 11;
-} */
 
 .productCheckbox {
   -ms-transform: scale(2); /* IE */
@@ -63,6 +52,7 @@
   -o-transform: scale(2); /* Opera */
 
   padding: 10px;
+  margin-top: 8px;
   margin-right: 10px;
 }
 
@@ -90,19 +80,13 @@
   opacity: 0.5;
 }
 
-/* .product-item-img:hover {
-  width: 100%;
-  justify-content: space-between;
-  opacity: 0.4;
-} */
-
 .productItemDetails {
   text-align: center;
   /* padding: 24px 0; */
 }
 .line {
   display: inline-block;
-  width: 150px;
+  width: 95%;
   border-bottom: 2px solid #eabf00;
   /* margin: 16px 0; */
 }
@@ -128,13 +112,17 @@
 
 .itemDelete {
   position: absolute;
-  top: 5px;
+  top: 7px;
+  right: 15px;
   font-size: 21px;
-  right: 27px;
   color: black;
   font-weight: 800;
   cursor: pointer;
   z-index: 10;
+}
+
+.productItemPrice {
+  display: inline-block;
 }
 
 @media all and (min-width: 768px) and (max-width: 1023px) {
@@ -143,20 +131,20 @@
   }
 }
 
-@media all and (min-width: 768px) and (max-width: 1023px) {
+@media all and (min-width: 200px) and (max-width: 1200px) {
   .productItem {
-    width: 33%;
+    width: 28%;
   }
 }
 
-@media all and (min-width: 480px) and (max-width: 767px) {
+@media all and (min-width: 500px) and (max-width: 900px) {
   .productItem {
-    width: 45%;
+    width: 40%;
   }
 }
 
-@media all and (max-width: 479px) {
+@media all and (max-width: 500px) {
   .productItem {
-    width: 100%;
+    width: 90%;
   }
 }

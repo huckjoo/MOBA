@@ -15,15 +15,13 @@ const CreateRoom = props => {
     window.open(
       "./chooseshop",
       "shops",
-      `width=${shopWidth}, left=${userWidth},top=0,height=10000, scrollbars=yes, resizable, status=yes, menubar=yes, titlebar=yes`
+      `width=${shopWidth}, left=${userWidth}, top=0, height=10000, scrollbars=yes, resizable, status=yes, menubar=yes, titlebar=yes`
     );
 
     window.open(`/room/${id}`, `videochat`, `width=${userWidth}, top=0, left=-10000, height=10000, scrollbars=yes, resizable=no`, "target");
     // props.history.push(`/room/${id}`);
   }
   const navigate = useNavigate();
-
-  
 
   const logout = () => {
     axios.get("/api/users/logout").then(response => {

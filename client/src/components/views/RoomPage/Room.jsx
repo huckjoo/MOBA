@@ -5,6 +5,7 @@ import styles from "./Room.module.css";
 import { useHistory, useParams } from "react-router-dom";
 import AddProduct from "../../addUrl/AddProduct";
 import WishList from "../../wishlist/Wishlist";
+import RoomMemu from "../../memu/RoomMemu";
 import axios from "axios";
 
 // 이 props에는 어떤 정보가 들어가지? 찍어보니까 history, location, url, path등의 정보를 받음
@@ -202,20 +203,22 @@ const Room = props => {
       <Header />
       <section className={styles.frame}>
         <div className={styles.webcam__box}>
-          <button ref={mobaBtn} className={styles.mobaBtn} onClick={shareScreen}>
+          {/* <button ref={mobaBtn} className={styles.mobaBtn} onClick={shareScreen}>
             화면공유
-          </button>
+          </button> */}
 
-          <video width="200" height="151" className={styles.video__control} autoPlay ref={userVideo} />
-          <video controls width="200" height="151" className={styles.video__control} autoPlay ref={partnerVideo} />
+          <div className="videoContainer">
+            <video className={styles.video__control} autoPlay ref={userVideo} />
+            <video controls className={styles.video__control} autoPlay ref={partnerVideo} />
+          </div>
 
-          <AddProduct />
+          <RoomMemu onShareScreen={shareScreen} />
 
-          <button ref={mobaBtn} className={styles.mobaBtn} onClick={HandleWishlist}>
+          {/* <button ref={mobaBtn} className={styles.mobaBtn} onClick={HandleWishlist}>
             위시리스트
           </button>
 
-          <div>{isWishlistOpen ? <WishList data={products} deleteItem={deleteItem} /> : <></>}</div>
+          <div>{isWishlistOpen ? <WishList data={products} deleteItem={deleteItem} /> : <></>}</div> */}
         </div>
       </section>
     </>

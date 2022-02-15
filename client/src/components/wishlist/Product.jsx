@@ -14,17 +14,20 @@ const Product = props => {
         X
       </p>
       <div className={styles.productLabel}>{item.shop_name}</div>
-      <div className={styles.containerImg}>
+      <div className={styles.containerImg} onClick={() => window.open(item.shop_url, "_blank")}>
         <img className={styles.productItemImg} src={item.img} alt="상품 이미지" onClick={() => {}} />
       </div>
       <div className={styles.productItemDetails}>
-        <h3 className={styles.productItemTitle}>{item.product_name}</h3>
+        <a className={styles.productItemTitle} onClick={() => window.open(item.shop_url, "_blank")}>
+          {item.product_name}
+        </a>
         <div className={styles.line}></div>
-        <h3 className={styles.productItemPrice}>{item.price}</h3>
-
-        <input className={styles.productCheckbox} type="checkbox" onChange={onChange} />
-        <button onClick={() => window.open(item.shop_url, "_blank")}>바로가기</button>
       </div>
+      <div className={styles.productFooter}>
+        <input className={styles.productCheckbox} type="checkbox" onChange={onChange} />
+        <h3 className={styles.productItemPrice}>{item.price}</h3>
+      </div>
+      {/* <button onClick={() => window.open(item.shop_url, "_blank")}>바로가기</button> */}
     </div>
   );
 };
