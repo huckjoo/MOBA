@@ -1,10 +1,13 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import io from "socket.io-client";
 import Header from "../../header/Header";
 import styles from "./Room.module.css";
 import { useHistory, useParams, useNavigate } from "react-router-dom";
+import AddProduct from "../../addUrl/AddProduct";
+import WishList from "../../wishlist/Wishlist";
 import RoomMemu from "../../memu/RoomMemu";
 import axios from "axios";
+import InviteBtn from "../../inviteBtn/InviteBtn";
 
 // 이 props에는 어떤 정보가 들어가지? 찍어보니까 history, location, url, path등의 정보를 받음
 
@@ -169,8 +172,9 @@ const Room = props => {
           <div className={styles.videoContainer}>
             <video className={styles.video__control} autoPlay ref={userVideo} />
             <video controls className={styles.video__control} autoPlay ref={partnerVideo} />
+            <RoomMemu onShareScreen={shareScreen} />
           </div>
-          <RoomMemu onShareScreen={shareScreen} />
+          <InviteBtn />
         </div>
       </section>
     </>

@@ -85,12 +85,12 @@
   }
 }
 
-@media all and (min-width: 280px) and (max-width: 900px) {
+@media all and (min-width: 300px) and (max-width: 900px) {
   .video__control {
     margin: 0;
     border-radius: 10px;
     margin: 0.2em;
-    width: 48%;
+    width: 40%;
     height: auto;
   }
 
@@ -101,7 +101,7 @@
   }
 }
 
-@media all and (max-width: 280px) {
+@media all and (max-width: 300px) {
   .video__control {
     margin: 0;
     border-radius: 10px;
@@ -112,8 +112,14 @@
 
   .videoContainer {
     display: flex;
-    /* justify-content: flex-end; */
     flex-wrap: wrap;
     justify-content: center;
   }
+}
+
+.videoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
 }

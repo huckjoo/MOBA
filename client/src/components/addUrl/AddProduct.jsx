@@ -33,17 +33,18 @@ const AddProduct = props => {
   };
 
   return (
-    // <div className={styles.AddWishList}>
-    //   <input className={styles.inputs} value={url} onChange={onChangeUrl} type="text" placeholder="위시리스트에 추가"></input>
-    //   <button className={styles.button} onClick={onClickAddBtn}>
-    //     추가
-    //   </button>
-    // </div>
-    <div className={styles.search}>
-      <input className={styles.addInput} type="text" placeholder="추가" />
-      <img className={styles.addImg} src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png" />
+    <div className={styles.AddWishList}>
+      <input className={styles.inputs} value={url} onChange={onChangeUrl} type="text" placeholder="위시리스트에 추가"></input>
+      <button className={styles.button} onClick={onClickAddBtn}>
+        추가
+      </button>
     </div>
   );
+  //   <div className={styles.search}>
+  //     <input type="text" placeholder="추가" />
+  //     <button onClick={onClickAddBtn}>추가</button>
+  //   </div>
+  // );
 };
 
 export default AddProduct;
