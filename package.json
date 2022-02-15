@@ -12,8 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.1",
+    "cheerio": "^1.0.0-rc.10",
     "concurrently": "^7.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -27,8 +29,16 @@
     "react": "^17.0.2",
     "socket.io": "^2.3.0"
   },
-  "description": "",
   "devDependencies": {
     "nodemon": "^2.0.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bewisesh91/MOBA-Front.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bewisesh91/MOBA-Front/issues"
+  },
+  "homepage": "https://github.com/bewisesh91/MOBA-Front#readme",
+  "description": ""
 }

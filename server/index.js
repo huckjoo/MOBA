@@ -2,22 +2,30 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const http = require("http");
+const socket = require("socket.io");
 
 const config = require("./config/key");
-const { User } = require("./models/User");
+const User = require("./models/User");
 const { auth } = require("./middleware/auth");
+const roomRouter = require('./router/room');
 
 const app = express();
-
 
 mongoose
   .connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(console.log("MongoDB Connected"))
   .catch((error) => console.log(error));
 
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+///// 공유 위시리스트 관련 코드 /////
+app.use('/room', roomRouter);
+//////////////////////////////
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -89,10 +97,9 @@ app.get("/api/users/logout", auth, (req, res) => {
   );
 });
 
-//////// 추가 ////////
-const http = require("http");
+
+///// 영상 통화 및 화면 공유 관련 코드 /////
 const server = http.createServer(app);
-const socket = require("socket.io");
 const io = socket(server);
 const rooms = {};
 io.on("connection", (socket) => {
@@ -125,6 +132,9 @@ io.on("connection", (socket) => {
     io.to(incoming.target).emit("ice-candidate", incoming.candidate);
   });
 });
-//////// 추가 ////////
+///////////////////////////////////
+
+
+
 
 server.listen(8000);
