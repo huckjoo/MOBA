@@ -7,6 +7,23 @@ import Header from '../../header/Header';
 import styles from './InvitedPage.module.css';
 
 function InvitedPage(props) {
+  function getCookie(cookieName) {
+    var cookieValue = null;
+    if (document.cookie) {
+      var array = document.cookie.split(escape(cookieName) + '=');
+      if (array.length >= 2) {
+        var arraySub = array[1].split(';');
+        cookieValue = unescape(arraySub[0]);
+      }
+    }
+    return cookieValue;
+  }
+
+  const navigate = useNavigate();
+  const handleClick = () => {
+    const room = getCookie('room');
+    navigate(`/room/${room}`);
+  };
   return (
     <>
       <Header />
@@ -17,7 +34,9 @@ function InvitedPage(props) {
               <span>초대장</span>
               <p>내일 소개팅인데 도와줘!</p>
             </div>
-            <button className={styles.buttons}>접속하기</button>
+            <button className={styles.buttons} onClick={handleClick}>
+              접속하기
+            </button>
           </div>
         </div>
       </div>

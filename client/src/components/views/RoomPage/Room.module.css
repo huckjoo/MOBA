@@ -24,6 +24,7 @@
 }
 
 .webcam__box {
+  margin-top: 5em;
   height: 100%;
   width: 100%;
   display: flex;

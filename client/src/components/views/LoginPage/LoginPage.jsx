@@ -28,7 +28,7 @@ function LoginPage(props) {
 
     dispatch(loginUser(body)).then((response) => {
       if (response.payload.loginSuccess && response.payload.room) {
-        navigate(`/room/${response.payload.room}`);
+        navigate('/invited');
       } else if (response.payload.loginSuccess) {
         navigate('/createroom');
       } else {
