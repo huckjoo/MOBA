@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import AddProduct from "../addUrl/AddProduct";
-import axios from "axios";
-import styles from "./RoomMemu.module.css";
-import WishList from "../wishlist/Wishlist";
+import React, { useState } from 'react';
+import AddProduct from '../addUrl/AddProduct';
+import axios from 'axios';
+import styles from './RoomMemu.module.css';
+import WishList from '../wishlist/Wishlist';
 
-const RoomMemu = props => {
+const RoomMemu = (props) => {
   const [isWishlistOpen, setWishlistOpen] = useState(false);
   const [products, setProducts] = useState([]);
-  const roomNumber = window.location.pathname.split("/")[2];
+  const roomNumber = window.location.pathname.split('/')[2];
 
   const getWishList = () => {
     axios
       .get(`/room/${roomNumber}/wishlist`)
-      .then(Response => {
-        console.log("axios get");
+      .then((Response) => {
+        console.log('axios get');
         setProducts([...Response.data]);
       })
-      .catch(Error => {
+      .catch((Error) => {
         console.log(Error);
       });
   };
@@ -30,34 +30,49 @@ const RoomMemu = props => {
     }
   };
 
-  const deleteAPIWishlistItem = shop_url => {
+  const deleteAPIWishlistItem = (shop_url) => {
     axios
       .delete(`/room/${roomNumber}/wishlist`, { data: { shop_url } })
       .then(function (response) {
         console.log(response);
-        setProducts(products?.filter(product => product.shop_url !== shop_url));
+        setProducts(
+          products?.filter((product) => product.shop_url !== shop_url)
+        );
       })
       .catch(function (error) {
         console.log(error.response);
       });
   };
 
-  const deleteItem = shop_url => {
-    console.log("deleteItem : ", shop_url);
+  const deleteItem = (shop_url) => {
+    console.log('deleteItem : ', shop_url);
     deleteAPIWishlistItem(shop_url);
   };
 
   return (
     <div>
       <AddProduct />
-
       <div className={styles.menuList}>
-        <button onClick={props.onShareScreen}>화면 공유</button>
-        <button onClick={HandleWishlist}>위시리스트</button>
-        <button>내 장바구니</button>
-        <button>투표 결과 확인</button>
+        <button className={styles.buttons} onClick={props.onShareScreen}>
+          <i class="fa-brands fa-slideshare fa-xl"></i>
+        </button>
+        <button className={styles.buttons} onClick={HandleWishlist}>
+          <i class="fa-solid fa-hand-holding-heart fa-xl"></i>
+        </button>
+        <button className={styles.buttons}>
+          <i class="fa-solid fa-cart-plus fa-xl"></i>
+        </button>
+        <button className={styles.buttons}>
+          <i class="fa-solid fa-check-to-slot fa-xl"></i>
+        </button>
       </div>
-      <div>{isWishlistOpen ? <WishList data={products} deleteItem={deleteItem} /> : <></>}</div>
+      <div>
+        {isWishlistOpen ? (
+          <WishList data={products} deleteItem={deleteItem} />
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 };

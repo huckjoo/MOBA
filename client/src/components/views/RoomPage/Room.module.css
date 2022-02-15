@@ -46,7 +46,7 @@
   margin: 0;
   padding: 0.5rem 1rem;
 
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: 400;
   text-align: center;
   text-decoration: none;
@@ -65,7 +65,7 @@
 
 .videoContainer .video__control {
   display: flex;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   flex-wrap: wrap;
 }
 
@@ -93,4 +93,15 @@
     width: 80%;
     height: 100%;
   }
+}
+
+.videoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.video__control {
+  margin-left: 25px;
 }
