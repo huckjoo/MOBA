@@ -10,6 +10,7 @@ const User = require("./models/User");
 const { auth } = require("./middleware/auth");
 const roomRouter = require('./router/room');
 const basketRouter = require('./router/privatebasket');
+const voteRouter = require('./router/vote');
 
 const app = express();
 
@@ -27,6 +28,10 @@ app.use('/room', roomRouter);
 //////////////////////////////
 ///// 개인 장바구니 라우팅 /////
 app.use('/privatebasket', basketRouter);
+//////////////////////////////
+///// 투표 라우팅 /////
+app.use('/vote', voteRouter);
+//////////////////////////////
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
