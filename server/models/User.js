@@ -30,7 +30,17 @@ const userSchema = mongoose.Schema({
   },
   tokenExp: {
     type: Number
-  }
+  },
+  products: [
+    {
+      product_name: String,
+      price: Number,
+      sale_price: Number,
+      shop_name: String,
+      shop_url: String,
+      img: String,
+    },
+  ],
 });
 
 //비밀번호를 암호화 시킨다.

@@ -17,8 +17,6 @@ mongoose
   .then(console.log("MongoDB Connected"))
   .catch((error) => console.log(error));
 
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
