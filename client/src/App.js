@@ -8,6 +8,7 @@ import LandingPage from "./components/views/LandingPage/LandingPage";
 import LoginPage from "./components/views/LoginPage/LoginPage";
 import RegisterPage from "./components/views/RegisterPage/RegisterPage";
 import Room from "../src/components/views/RoomPage/Room";
+import InvitedPage from '../src/components/views/InvitedPage/InvitedPage';
 
 function App() {
   return (
@@ -20,8 +21,8 @@ function App() {
           <Route path="/createroom" exact element={<CreateRoom />} />
           <Route path="/chooseshop" element={<ChooseShop />} />
           <Route path="/room/:roomID" element={<Room />} />
-
-          {/* <Route path="*" element={<Navigate replace to='/' />} /> */}
+          <Route path="/invited" element={<InvitedPage />} />
+          <Route path="*" element={<Navigate replace to='/' />} />
         </Routes>
       </div>
     </Router>

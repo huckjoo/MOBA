@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import '@fortawesome/fontawesome-free/js/all.js';
 import 'antd/dist/antd.min.css'
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
