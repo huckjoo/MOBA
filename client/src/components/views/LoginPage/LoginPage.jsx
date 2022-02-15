@@ -48,6 +48,7 @@ function LoginPage(props) {
             </div>
             <form className={styles.loginForm} onSubmit={onSubmitHandler}>
               <input
+                autoFocus
                 className={styles.inputs}
                 type="username"
                 value={Username}

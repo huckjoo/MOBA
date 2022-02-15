@@ -7,15 +7,16 @@
   align-items: center;
   flex-direction: column;
 }
-.loginBox {
+.invitedBox {
   width: 30em;
-  height: 44em;
+  height: 30em;
   background-color: black;
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
   border-radius: 10px;
-  margin-top: 5em;
+  margin-top: 4em;
   border: 2px solid white;
 }
 .buttons {
@@ -41,32 +42,25 @@
 .buttons:hover {
   cursor: pointer;
 }
-.loginText {
+.invitedText {
   color: white;
   font-size: 34px;
   font-weight: 600;
   width: 100%;
   text-align: left;
-  margin-bottom: 1em;
+  margin-bottom: 2em;
+}
+
+.invitedText span {
+  font-size: 1.5em;
+}
+.invitedText p {
   margin-top: 1em;
 }
 
-.loginForm {
+.invitedContents {
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
-}
-
-.inputs {
-  outline-style: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-color: #141414;
-  border: none;
-  border-radius: 5px;
-  padding: 14px;
-  color: antiquewhite;
-  margin-bottom: 2em;
-  font-weight: 600;
-  font-size: 1.1em;
 }

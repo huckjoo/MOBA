@@ -11,6 +11,7 @@ import Room from "../src/components/views/RoomPage/Room";
 import InvitedPage from '../src/components/views/InvitedPage/InvitedPage';
 
 function App() {
+  document.body.style.backgroundColor = "black";
   return (
     <Router>
       <div>
