@@ -7,10 +7,11 @@ import WishList from "../wishlist/Wishlist";
 const RoomMemu = props => {
   const [isWishlistOpen, setWishlistOpen] = useState(false);
   const [products, setProducts] = useState([]);
+  const roomNumber = window.location.pathname.split("/")[2];
 
   const getWishList = () => {
     axios
-      .get("/room/1/wishlist")
+      .get(`/room/${roomNumber}/wishlist`)
       .then(Response => {
         console.log("axios get");
         setProducts([...Response.data]);
@@ -31,7 +32,7 @@ const RoomMemu = props => {
 
   const deleteAPIWishlistItem = shop_url => {
     axios
-      .delete("/room/1/wishlist", { data: { shop_url } })
+      .delete(`/room/${roomNumber}/wishlist`, { data: { shop_url } })
       .then(function (response) {
         console.log(response);
         setProducts(products?.filter(product => product.shop_url !== shop_url));

@@ -63,11 +63,11 @@
   cursor: pointer;
 }
 
-/* .videoContainer .video__control {
+.videoContainer .video__control {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
-} */
+}
 
 @media all and (min-width: 350px) and (max-width: 900px) {
   .video__control {

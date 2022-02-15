@@ -5,6 +5,7 @@ import styles from "./AddProduct.module.css";
 const AddProduct = props => {
   const [url, setUrl] = useState("");
   const [products, setProducts] = useState([]);
+  const roomNumber = window.location.pathname.split("/")[2];
 
   const onChangeUrl = e => {
     setUrl(e.target.value);
@@ -17,7 +18,7 @@ const AddProduct = props => {
     }
     axios
       // .post("http://192.249.29.17:3000/room/1/wishlist", { url })
-      .post("/room/1/wishlist", { url })
+      .post(`/room/${roomNumber}/wishlist`, { url })
       .then(Response => {
         console.log("post : ", Response.data);
         console.log(Response.status);
