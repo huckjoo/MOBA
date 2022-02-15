@@ -66,6 +66,13 @@ function LoginPage(props) {
                 로그인
               </button>
             </form>
+            <a
+              href={
+                'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=497af053ca6574eb9e8a19b5797cf024&redirect_uri=http://localhost:3000/login'
+              }
+            >
+              카카오 로그인
+            </a>
           </div>
         </div>
       </div>

@@ -20,7 +20,8 @@ function App() {
           <Route path="/createroom" exact element={<CreateRoom />} />
           <Route path="/chooseshop" element={<ChooseShop />} />
           <Route path="/room/:roomID" element={<Room />} />
-          <Route path="*" element={<Navigate replace to='/' />} />
+
+          {/* <Route path="*" element={<Navigate replace to='/' />} /> */}
         </Routes>
       </div>
     </Router>

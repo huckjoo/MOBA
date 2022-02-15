@@ -10,8 +10,17 @@ const User = require("./models/User");
 const { auth } = require("./middleware/auth");
 const roomRouter = require('./router/room');
 const userRouter = require('./router/user');
+const oauthRouter = require('./router/oauth')
 
 const app = express();
+
+///// 소셜 로그인 관련 /////
+// const winston = require('winston');
+// const logger = winston.createLogger();
+// const qs = require('qs');
+// const fetch = require('node-fetch');
+
+
 
 mongoose
   .connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -32,6 +41,8 @@ app.use('/room', roomRouter);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+app.use('/oauth', oauthRouter);
 
 ///// 영상 통화 및 화면 공유 /////
 const server = http.createServer(app);
