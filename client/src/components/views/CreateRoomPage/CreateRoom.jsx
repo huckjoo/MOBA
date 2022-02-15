@@ -38,15 +38,29 @@ const CreateRoom = props => {
     <>
       <Header />
       <div className={styles.container}>
-        <div className={styles.selectBtns}>
+        <div className={styles.btnWrapper} id={styles.firstWrapper}>
           <button className={styles.buttons}>친구관리</button>
+        </div>
+        <div className={styles.btnWrapper}>
           <button className={styles.buttons}>장바구니</button>
-          <button id={styles.shoppingStart} className={styles.buttons} onClick={create}>
+        </div>
+        <div className={styles.btnWrapper}>
+          <button
+            id={styles.shoppingStart}
+            className={styles.buttons}
+            onClick={create}
+          >
             쇼핑시작
           </button>
-          <button className={styles.buttons} id={styles.logoutBtn} onClick={logout}>
-            {" "}
-            로그아웃{" "}
+        </div>
+        <div className={styles.btnWrapper}>
+          <button
+            className={styles.buttons}
+            id={styles.logoutBtn}
+            onClick={logout}
+          >
+            {' '}
+            로그아웃{' '}
           </button>
         </div>
       </div>
