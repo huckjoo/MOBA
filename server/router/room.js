@@ -275,4 +275,14 @@ roomRouter.delete("/:id/wishlist", async (req, res) => {
   }
 });
 
+// 함께 쇼핑 끝 (사이트 닫거나 || 나가기 버튼): 공유 위시리스트 디비에서 삭제
+// url : http://www.moba.com/room/{socketid}/wishlist
+// method: delete
+// data: room info
+roomRouter.delete("/:id", async (req, res) => {
+  console.log(req.params);
+  await sharedWishList.deleteOne({room_info : req.params.id});
+  res.send(`destroy ${req.params.id} 's wishlist`);
+});
+
 module.exports = roomRouter;
