@@ -1,12 +1,15 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import io from "socket.io-client";
 import Header from "../../header/Header";
 import styles from "./Room.module.css";
 import { useHistory, useParams } from "react-router-dom";
+import AddProduct from "../../addUrl/AddProduct";
+import WishList from "../../wishlist/Wishlist";
+import axios from "axios";
 
 // 이 props에는 어떤 정보가 들어가지? 찍어보니까 history, location, url, path등의 정보를 받음
 
-const Room = (props) => {
+const Room = props => {
   const userVideo = useRef();
   const partnerVideo = useRef();
   const peerRef = useRef();
@@ -18,22 +21,25 @@ const Room = (props) => {
   const mobaBtn = useRef();
   const roomID = useParams().roomID;
 
+  const [isWishlistOpen, setWishlistOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+
   React.useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: true }) // 사용자의 media data를 stream으로 받아옴(video, audio)
-      .then((stream) => {
+      .then(stream => {
         userVideo.current.srcObject = stream; // video player에 그 stream을 설정함
         userStream.current = stream; // userStream이라는 변수에 stream을 담아놓음
 
         socketRef.current = io.connect("/");
         socketRef.current.emit("join room", roomID); // roomID를 join room을 통해 server로 전달함
 
-        socketRef.current.on("other user", (userID) => {
+        socketRef.current.on("other user", userID => {
           callUser(userID);
           otherUser.current = userID;
         });
 
-        socketRef.current.on("user joined", (userID) => {
+        socketRef.current.on("user joined", userID => {
           otherUser.current = userID;
         });
 
@@ -48,13 +54,7 @@ const Room = (props) => {
   function callUser(userID) {
     peerRef.current = createPeer(userID);
     //senders에 넣어준다 - 중요!
-    userStream.current
-      .getTracks()
-      .forEach((track) =>
-        senders.current.push(
-          peerRef.current.addTrack(track, userStream.current)
-        )
-      );
+    userStream.current.getTracks().forEach(track => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
   }
 
   function createPeer(userID) {
@@ -81,7 +81,7 @@ const Room = (props) => {
   function handleNegotiationNeededEvent(userID) {
     peerRef.current
       .createOffer()
-      .then((offer) => {
+      .then(offer => {
         return peerRef.current.setLocalDescription(offer);
       })
       .then(() => {
@@ -92,7 +92,7 @@ const Room = (props) => {
         };
         socketRef.current.emit("offer", payload);
       })
-      .catch((e) => console.log(e));
+      .catch(e => console.log(e));
   }
 
   function handleRecieveCall(incoming) {
@@ -101,18 +101,12 @@ const Room = (props) => {
     peerRef.current
       .setRemoteDescription(desc)
       .then(() => {
-        userStream.current
-          .getTracks()
-          .forEach((track) =>
-            senders.current.push(
-              peerRef.current.addTrack(track, userStream.current)
-            )
-          );
+        userStream.current.getTracks().forEach(track => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
       })
       .then(() => {
         return peerRef.current.createAnswer();
       })
-      .then((answer) => {
+      .then(answer => {
         return peerRef.current.setLocalDescription(answer);
       })
       .then(() => {
@@ -127,7 +121,7 @@ const Room = (props) => {
 
   function handleAnswer(message) {
     const desc = new RTCSessionDescription(message.sdp);
-    peerRef.current.setRemoteDescription(desc).catch((e) => console.log(e));
+    peerRef.current.setRemoteDescription(desc).catch(e => console.log(e));
   }
 
   function handleICECandidateEvent(e) {
@@ -143,7 +137,7 @@ const Room = (props) => {
   function handleNewICECandidateMsg(incoming) {
     const candidate = new RTCIceCandidate(incoming);
 
-    peerRef.current.addIceCandidate(candidate).catch((e) => console.log(e));
+    peerRef.current.addIceCandidate(candidate).catch(e => console.log(e));
   }
 
   function handleTrackEvent(e) {
@@ -151,49 +145,77 @@ const Room = (props) => {
   }
 
   function shareScreen() {
-    navigator.mediaDevices.getDisplayMedia({ cursor: true }).then((stream) => {
+    window.resizeTo((window.screen.availWidth / 7) * 3, window.screen.availHeight);
+
+    navigator.mediaDevices.getDisplayMedia({ cursor: true }).then(stream => {
       const screenTrack = stream.getTracks()[0];
       //face를 screen으로 바꿔줌
-      senders.current
-        .find((sender) => sender.track.kind === "video")
-        .replaceTrack(screenTrack);
+      senders.current.find(sender => sender.track.kind === "video").replaceTrack(screenTrack);
       console.log("partnerVideo current", partnerVideo.current);
       //크롬에서 사용자가 공유중지를 누르면, screen을 face로 다시 바꿔줌
       screenTrack.onended = function () {
-        senders.current
-          .find((sender) => sender.track.kind === "video")
-          .replaceTrack(userStream.current.getTracks()[1]);
+        senders.current.find(sender => sender.track.kind === "video").replaceTrack(userStream.current.getTracks()[1]);
       };
     });
   }
 
+  const getWishList = () => {
+    axios
+      .get("/room/1/wishlist")
+      .then(Response => {
+        console.log("axios get");
+        setProducts([...Response.data]);
+      })
+      .catch(Error => {
+        console.log(Error);
+      });
+  };
+
+  const HandleWishlist = () => {
+    getWishList();
+    if (isWishlistOpen) {
+      setWishlistOpen(false);
+    } else {
+      setWishlistOpen(true);
+    }
+  };
+
+  const deleteAPIWishlistItem = shop_url => {
+    axios
+      .delete("/room/1/wishlist", { data: { shop_url } })
+      .then(function (response) {
+        console.log(response);
+        setProducts(products?.filter(product => product.shop_url !== shop_url));
+      })
+      .catch(function (error) {
+        console.log(error.response);
+      });
+  };
+
+  const deleteItem = shop_url => {
+    console.log("deleteItem : ", shop_url);
+    deleteAPIWishlistItem(shop_url);
+  };
+
   return (
     <>
+      <Header />
       <section className={styles.frame}>
-        <Header />
         <div className={styles.webcam__box}>
-          <button
-            ref={mobaBtn}
-            className={styles.mobaBtn}
-            onClick={shareScreen}
-          >
+          <button ref={mobaBtn} className={styles.mobaBtn} onClick={shareScreen}>
             화면공유
           </button>
-          <video
-            width="200"
-            height="151"
-            className={styles.video__control}
-            autoPlay
-            ref={userVideo}
-          />
-          <video
-            controls
-            width="200"
-            height="151"
-            className={styles.video__control}
-            autoPlay
-            ref={partnerVideo}
-          />
+
+          <video width="200" height="151" className={styles.video__control} autoPlay ref={userVideo} />
+          <video controls width="200" height="151" className={styles.video__control} autoPlay ref={partnerVideo} />
+
+          <AddProduct />
+
+          <button ref={mobaBtn} className={styles.mobaBtn} onClick={HandleWishlist}>
+            위시리스트
+          </button>
+
+          <div>{isWishlistOpen ? <WishList data={products} deleteItem={deleteItem} /> : <></>}</div>
         </div>
       </section>
     </>
