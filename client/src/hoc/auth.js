@@ -19,7 +19,7 @@ export default function (SpecificComponent, option, adminRoute = null) {
             navigate("/login");
           } else if (option === "register") {
             navigate("/register");
-          } else {
+          } else if (option === true) {
             navigate("/");
           }
         }

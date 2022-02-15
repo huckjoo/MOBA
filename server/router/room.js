@@ -32,9 +32,19 @@ roomRouter.param('id', async (req, res, next, value) => {
 // 함께 쇼핑(외부) - 모바 메인
 // url : www.moba.com/room/{roomid}
 // method : get
-roomRouter.get('/:id', (req, res) => {
-  console.log(`this is room N`);
-  res.send('this is room N');
+roomRouter.get('/:id', async (req, res) => {
+  console.log(req.params.id)
+  console.log(req.cookies)
+  if (req.cookies.x_auth === undefined) {
+    const io = req.cookies.io;
+    const room = req.params.id
+    await res
+      .cookie('room', room)
+      .status(200).json({
+        success: true,
+        io: io
+      });
+  }
 });
 
 // 위시리스트 상품 넣기 Helper

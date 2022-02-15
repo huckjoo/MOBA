@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import ChooseShop from "../src/components/views/ChooseShopPage/ChooseShop";
 import CreateRoom from "../src/components/views/CreateRoomPage/CreateRoom.jsx";
@@ -20,6 +20,7 @@ function App() {
           <Route path="/createroom" exact element={<CreateRoom />} />
           <Route path="/chooseshop" element={<ChooseShop />} />
           <Route path="/room/:roomID" element={<Room />} />
+          <Route path="*" element={<Navigate replace to='/' />} />
         </Routes>
       </div>
     </Router>

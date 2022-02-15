@@ -1,8 +1,11 @@
-import React, { useRef, useEffect } from "react";
-import io from "socket.io-client";
-import Header from "../../header/Header";
-import styles from "./Room.module.css";
-import { useHistory, useParams } from "react-router-dom";
+import React, { useRef, useEffect } from 'react';
+import io from 'socket.io-client';
+import Header from '../../header/Header';
+import styles from './Room.module.css';
+import { useHistory, useParams } from 'react-router-dom';
+import Auth from '../../../hoc/auth';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // 이 props에는 어떤 정보가 들어가지? 찍어보니까 history, location, url, path등의 정보를 받음
 
@@ -17,6 +20,15 @@ const Room = (props) => {
   const senders = useRef([]);
   const mobaBtn = useRef();
   const roomID = useParams().roomID;
+  const navigate = useNavigate();
+
+  window.onload = function () {
+    axios.get(`/room/${roomID}`).then((response) => {
+      if (response.data.success) {
+        return (document.location.href = '/');
+      }
+    });
+  };
 
   React.useEffect(() => {
     navigator.mediaDevices
@@ -25,23 +37,23 @@ const Room = (props) => {
         userVideo.current.srcObject = stream; // video player에 그 stream을 설정함
         userStream.current = stream; // userStream이라는 변수에 stream을 담아놓음
 
-        socketRef.current = io.connect("/");
-        socketRef.current.emit("join room", roomID); // roomID를 join room을 통해 server로 전달함
+        socketRef.current = io.connect('/');
+        socketRef.current.emit('join room', roomID); // roomID를 join room을 통해 server로 전달함
 
-        socketRef.current.on("other user", (userID) => {
+        socketRef.current.on('other user', (userID) => {
           callUser(userID);
           otherUser.current = userID;
         });
 
-        socketRef.current.on("user joined", (userID) => {
+        socketRef.current.on('user joined', (userID) => {
           otherUser.current = userID;
         });
 
-        socketRef.current.on("offer", handleRecieveCall);
+        socketRef.current.on('offer', handleRecieveCall);
 
-        socketRef.current.on("answer", handleAnswer);
+        socketRef.current.on('answer', handleAnswer);
 
-        socketRef.current.on("ice-candidate", handleNewICECandidateMsg);
+        socketRef.current.on('ice-candidate', handleNewICECandidateMsg);
       });
   }, []); // 맨 처음 한번만
 
@@ -61,12 +73,12 @@ const Room = (props) => {
     const peer = new RTCPeerConnection({
       iceServers: [
         {
-          urls: "stun:stun.stunprotocol.org",
+          urls: 'stun:stun.stunprotocol.org',
         },
         {
-          urls: "turn:numb.viagenie.ca",
-          credential: "muazkh",
-          username: "webrtc@live.com",
+          urls: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
         },
       ],
     });
@@ -90,7 +102,7 @@ const Room = (props) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         };
-        socketRef.current.emit("offer", payload);
+        socketRef.current.emit('offer', payload);
       })
       .catch((e) => console.log(e));
   }
@@ -121,7 +133,7 @@ const Room = (props) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         };
-        socketRef.current.emit("answer", payload);
+        socketRef.current.emit('answer', payload);
       });
   }
 
@@ -136,7 +148,7 @@ const Room = (props) => {
         target: otherUser.current,
         candidate: e.candidate,
       };
-      socketRef.current.emit("ice-candidate", payload);
+      socketRef.current.emit('ice-candidate', payload);
     }
   }
 
@@ -155,13 +167,13 @@ const Room = (props) => {
       const screenTrack = stream.getTracks()[0];
       //face를 screen으로 바꿔줌
       senders.current
-        .find((sender) => sender.track.kind === "video")
+        .find((sender) => sender.track.kind === 'video')
         .replaceTrack(screenTrack);
-      console.log("partnerVideo current", partnerVideo.current);
+      console.log('partnerVideo current', partnerVideo.current);
       //크롬에서 사용자가 공유중지를 누르면, screen을 face로 다시 바꿔줌
       screenTrack.onended = function () {
         senders.current
-          .find((sender) => sender.track.kind === "video")
+          .find((sender) => sender.track.kind === 'video')
           .replaceTrack(userStream.current.getTracks()[1]);
       };
     });
