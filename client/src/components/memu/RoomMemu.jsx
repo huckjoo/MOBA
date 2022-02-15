@@ -47,9 +47,13 @@ const RoomMemu = props => {
     deleteAPIWishlistItem(shop_url);
   };
 
+  const handleAddProduct = new_product => {
+    setProducts([...products, new_product]);
+  };
+
   return (
     <div>
-      <AddProduct />
+      <AddProduct handleAddProduct={handleAddProduct} />
 
       <div className={styles.menuList}>
         <button onClick={props.onShareScreen}>화면 공유</button>
