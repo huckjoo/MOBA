@@ -49,7 +49,7 @@ const RoomMemu = (props) => {
     deleteAPIWishlistItem(shop_url);
   };
 
-  const handleAddProduct = new_product => {
+  const handleAddProduct = (new_product) => {
     setProducts([...products, new_product]);
   };
 
@@ -59,16 +59,16 @@ const RoomMemu = (props) => {
 
       <div className={styles.menuList}>
         <button className={styles.buttons} onClick={props.onShareScreen}>
-          <i class="fa-brands fa-slideshare fa-xl"></i>
+          <i className="fa-brands fa-slideshare fa-xl"></i>
         </button>
         <button className={styles.buttons} onClick={HandleWishlist}>
-          <i class="fa-solid fa-hand-holding-heart fa-xl"></i>
+          <i className="fa-solid fa-hand-holding-heart fa-xl"></i>
         </button>
         <button className={styles.buttons}>
-          <i class="fa-solid fa-cart-plus fa-xl"></i>
+          <i className="fa-solid fa-cart-plus fa-xl"></i>
         </button>
         <button className={styles.buttons}>
-          <i class="fa-solid fa-check-to-slot fa-xl"></i>
+          <i className="fa-solid fa-check-to-slot fa-xl"></i>
         </button>
       </div>
       <div>
