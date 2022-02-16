@@ -14,7 +14,7 @@ basketRouter.post("/", async (req, res) => {
 
   // 토큰으로 유저 찾고 - 잘못된 유저 찾은
   const cur_user = await User.findOne({
-    token: req.body.data.token,
+    token: req.body.token,
   });
 
   console.log(cur_user);
@@ -25,7 +25,7 @@ basketRouter.post("/", async (req, res) => {
 
   console.log(prev_products_url);
   // 새로 장바구니에 넣으려는게 이미 있는지 확인하고
-  const add_products = req.body.data.products?.filter((product) => {
+  const add_products = req.body.products?.filter((product) => {
     if (prev_products_url.includes(product.shop_url)) {
     } else {
       return product;

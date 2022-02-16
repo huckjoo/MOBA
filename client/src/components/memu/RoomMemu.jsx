@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import AddProduct from '../addUrl/AddProduct';
-import axios from 'axios';
-import styles from './RoomMemu.module.css';
-import WishList from '../wishlist/Wishlist';
-import Loading from '../loading/Loading';
+import React, { useState } from "react";
+import AddProduct from "../addUrl/AddProduct";
+import axios from "axios";
+import styles from "./RoomMemu.module.css";
+import WishList from "../wishlist/Wishlist";
+import Loading from "../loading/Loading";
 
 import { useParams } from "react-router-dom";
 
 const RoomMemu = (props) => {
   const [isWishlistOpen, setWishlistOpen] = useState(false);
   const [products, setProducts] = useState([]);
-  const roomNumber = window.location.pathname.split('/')[2];
+  const roomNumber = window.location.pathname.split("/")[2];
   const [isLoading, setIsLoading] = useState(false);
 
   const [checkedInputs, setCheckedInputs] = useState([]);
@@ -22,15 +22,15 @@ const RoomMemu = (props) => {
       setCheckedInputs(checkedInputs.filter((el) => el !== id));
     }
 
-    console.log('changeHandler : ', checkedInputs);
+    console.log("changeHandler : ", checkedInputs);
   };
 
   const getCookie = (cookieName) => {
     var cookieValue = null;
     if (document.cookie) {
-      var array = document.cookie.split(escape(cookieName) + '=');
+      var array = document.cookie.split(escape(cookieName) + "=");
       if (array.length >= 2) {
-        var arraySub = array[1].split(';');
+        var arraySub = array[1].split(";");
         cookieValue = unescape(arraySub[0]);
       }
     }
@@ -38,13 +38,13 @@ const RoomMemu = (props) => {
   };
 
   const handleMylistClick = () => {
-    const token = getCookie('x_auth');
+    const token = getCookie("x_auth");
 
-    console.log('changeHandler : ', checkedInputs);
-    console.log('cookie : ', token);
+    console.log("changeHandler : ", checkedInputs);
+    console.log("cookie : ", token);
 
     if (checkedInputs.length === 0) {
-      console.log('선택된 상품이 없습니다.');
+      console.log("선택된 상품이 없습니다.");
       return;
     }
     axios
@@ -67,7 +67,7 @@ const RoomMemu = (props) => {
     axios
       .get(`/room/${roomNumber}/wishlist`)
       .then((Response) => {
-        console.log('axios get');
+        console.log("axios get");
         setIsLoading(false);
         setProducts([...Response.data]);
       })
@@ -100,7 +100,7 @@ const RoomMemu = (props) => {
   };
 
   const deleteItem = (shop_url) => {
-    console.log('deleteItem : ', shop_url);
+    console.log("deleteItem : ", shop_url);
     deleteAPIWishlistItem(shop_url);
   };
 
@@ -109,13 +109,12 @@ const RoomMemu = (props) => {
   };
 
   // 화상 창 닫으면 - 유저 토큰 + 위시리스트 상품들 정보 긁어서 post privatebasket
-  window.addEventListener("unload" , () => {
-    const token = getCookie('x_auth')
-    axios.post(`/privatebasket`, { data: { token, products }}).then(response => {
+  window.addEventListener("unload", () => {
+    const token = getCookie("x_auth");
+    axios.post(`/privatebasket`, { token, products }).then((response) => {
       if (response.data.success) {
         return (document.location.href = "/");
       }
-      
     });
 
     // 두명 다 나갈때만 해야함
@@ -124,8 +123,7 @@ const RoomMemu = (props) => {
     //     return (document.location.href = "/");
     //   }
     // });
-  })
-
+  });
 
   return (
     <>
