@@ -5,18 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import Auth from '../../../hoc/auth';
 import Header from '../../header/Header';
 import styles from './InvitedPage.module.css';
+import Cookies from 'universal-cookie';
 
 function InvitedPage(props) {
-  function getCookie(cookieName) {
-    var cookieValue = null;
-    if (document.cookie) {
-      var array = document.cookie.split(escape(cookieName) + '=');
-      if (array.length >= 2) {
-        var arraySub = array[1].split(';');
-        cookieValue = unescape(arraySub[0]);
-      }
-    }
-    return cookieValue;
+  function getCookie(name) {
+    const cookies = new Cookies();
+    return cookies.get(name);
   }
 
   const navigate = useNavigate();

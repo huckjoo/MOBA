@@ -68,7 +68,9 @@ userRouter.get("/logout", auth, (req, res) => {
     console.log(req.user._id),
     { token: "" },
     (error, user) => {
-      if (error) return res.json({ success: false, error });
+      if (error) {
+        return res.json({ success: false, error });
+      }
       return res.clearCookie("x_auth").status(200).send({
         success: true,
         message: "로그아웃 되었습니다.",

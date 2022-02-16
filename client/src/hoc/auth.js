@@ -9,10 +9,10 @@ export default function (SpecificComponent, option, adminRoute = null) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+
     useEffect(() => {
       dispatch(auth()).then((response) => {
         console.log(response);
-
         // 로그인 하지 않은 상태
         if (!response.payload.isAuth) {
           if (option === "login") {

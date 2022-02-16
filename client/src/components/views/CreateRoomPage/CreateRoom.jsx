@@ -5,8 +5,16 @@ import Auth from '../../../hoc/auth';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../header/Header';
+import Cookies from 'universal-cookie';
 
 const CreateRoom = (props) => {
+  function getCookie(name) {
+    const cookies = new Cookies();
+    return cookies.get(name);
+  }
+  if (getCookie('room')) {
+    document.location.href = '/invited';
+  }
   function create() {
     const id = uuid();
     const shopWidth = window.screen.width * 0.85;
@@ -27,13 +35,12 @@ const CreateRoom = (props) => {
     // props.history.push(`/room/${id}`);
   }
   const navigate = useNavigate();
-
   const logout = () => {
     axios.get('/api/users/logout').then((response) => {
       if (response.data.success) {
         navigate('/');
       }
-      console.log(response.data);
+      navigate('/');
     });
   };
 

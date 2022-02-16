@@ -3,13 +3,17 @@ const oauthRouter = express.Router();
 const winston = require('winston');
 const logger = winston.createLogger();
 const qs = require('qs');
+const fetch = require('node-fetch');
+
+const User = require('../models/User');
+const { auth } = require("../middleware/auth");
 
 class Kakao {
   constructor(code) {
     this.url = 'https://kauth.kakao.com/oauth/token';
     this.clientID = '497af053ca6574eb9e8a19b5797cf024';
-    this.clientSecret = 'o2Xtu0bUdX799R2vweOkXx3VPigyUtdK';
-    this.redirectUri = 'http://localhost:3000/login';
+    this.clientSecret = 'HLhen6EGLnjgs2g7OmfBNGnwnYpWWekL';
+    this.redirectUri = 'http://localhost:8000/oauth/kakao';
     this.code = code;
     this.userInfoUrl = 'https://kapi.kakao.com/v2/user/me';
   }
@@ -69,7 +73,7 @@ const getOption = (coperation, code) => {
 
 oauthRouter.get(`/:coperation`, async (req, res) => {
   const coperation = req.params.coperation;
-  const code = req.body.code;
+  const code = req.query.code;
   const options = getOption(coperation, code);
   const token = await getAccessToken(options);
   const userInfo = await getUserInfo(options.userInfoUrl, token.access_token);
@@ -77,10 +81,37 @@ oauthRouter.get(`/:coperation`, async (req, res) => {
   // TODO Redirect Frot Server (쿠키, 세션, local_store 중에 로그인을 유지한다.)
   // TODO Data Base or 쿠키 reflesh Token 저장 방법 모색
   console.log(userInfo);
+
+  let body = {
+    username: userInfo.kakao_account.email,
+    password: userInfo.kakao_account.email,
+    name: userInfo.properties.nickname,
+    email: userInfo.kakao_account.email,
+    token: token.access_token
+  };
+  console.log(body)
+
+  User.findOne({ email: body.email }, (error, user) => {
+    // user가 없다면
+    if (!user) {
+      const user = new User(body);
+      user.save((error, userSave) => {
+        if (error) {
+          console.log('save error')
+        }
+      })
+
+    }
+    // user가 있다면
+    user.token = token.access_token;
+    user.save(function (error, user) {
+      if (error) return cb(error)
+    })
+  })
+
   res
-    .redirect('http://localhost:3000/createroom')
     .cookie('x_auth', token.access_token)
-    .send(userInfo);
+    .redirect('http://localhost:3000/createroom')
 })
 
 module.exports = oauthRouter;
