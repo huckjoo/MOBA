@@ -4,10 +4,14 @@ import axios from 'axios';
 import styles from './RoomMemu.module.css';
 import WishList from '../wishlist/Wishlist';
 
+import { useParams } from "react-router-dom";
+
 const RoomMemu = (props) => {
   const [isWishlistOpen, setWishlistOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const roomNumber = window.location.pathname.split('/')[2];
+
+  const roomID = useParams().roomID;
 
   const getWishList = () => {
     axios
@@ -52,6 +56,36 @@ const RoomMemu = (props) => {
   const handleAddProduct = new_product => {
     setProducts([...products, new_product]);
   };
+
+  function getCookie(cookieName) {
+    var cookieValue = null;
+    if (document.cookie) {
+      var array = document.cookie.split(escape(cookieName) + '=');
+      if (array.length >= 2) {
+        var arraySub = array[1].split(';');
+        cookieValue = unescape(arraySub[0]);
+      }
+    }
+    return cookieValue;
+  };
+  // 화상 창 닫으면 - 유저 토큰 + 위시리스트 상품들 정보 긁어서 post privatebasket
+  window.addEventListener("unload" , () => {
+    const token = getCookie('x_auth')
+    axios.post(`/privatebasket`, { data: { token, products }}).then(response => {
+      if (response.data.success) {
+        return (document.location.href = "/");
+      }
+      
+    });
+
+    // 두명 다 나갈때만 해야함
+    // axios.delete(`/room/${roomID}`).then(response => {
+    //   if (response.data.success) {
+    //     return (document.location.href = "/");
+    //   }
+    // });
+  })
+
 
   return (
     <div>
