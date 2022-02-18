@@ -1,0 +1,188 @@
+import React from 'react';
+import './Popup.css';
+const cheerio = require('cheerio');
+const axios = require('axios');
+// var checkeddd;
+// let new_product_list;
+
+const Popup = () => {
+  chrome.tabs.query(
+    { currentWindow: true, active: true },
+    async function (tabs) {
+      // console.log(tabs[0].url);
+      const shopUrl = tabs[0].url;
+      const new_product = await parse_product(shopUrl);
+
+      let imageBox = document.querySelector('#imageBox');
+      let totalImg = '';
+      // function handleChange(e) {
+      //   checkeddd = e.target.value;
+      //   console.log(checkeddd);
+      // }
+      console.log(new_product.img);
+      // new_product_list = new_product.img;
+
+      // const chooseImg = (e) => {
+      //  console.log(e.target.value);
+      // };
+      for (let i = 0; i < new_product.img.length; i++) {
+        let imageUrl = new_product.img[i].attribs.src;
+        totalImg += `
+        <div className='imageCard'>
+        <img src='https:${imageUrl}' alt='img1'/>
+        <input type='radio' name='img' value=${i}>
+        <button id=${i} className='btns'>check!</button>
+        </div>
+        `;
+      }
+      imageBox.innerHTML = totalImg;
+    }
+  );
+  // w-concept
+  function w_concept(html, url) {
+    let shop_name, shop_url, img_url, product_name, price, sale_price;
+    const $ = cheerio.load(html); // html load
+
+    product_name = $("meta[property='og:description']").attr('content');
+    price = $("meta[property='eg:originalPrice']").attr('content');
+    sale_price = $("meta[property='eg:salePrice']").attr('content');
+    shop_name = $("meta[property='og:site_name']").attr('content');
+    shop_url = url;
+    img_url = $("meta[property='og:image']").attr('content');
+
+    const new_product = {
+      product_name: product_name,
+      price: price,
+      sale_price: sale_price,
+      shop_name: shop_name,
+      shop_url: shop_url,
+      img: img_url,
+    };
+
+    return new_product;
+  }
+
+  // 무신사
+  function musinsa(html, url) {
+    let shop_name, shop_url, img_url, product_name, price, sale_price;
+    const $ = cheerio.load(html); // html load
+
+    product_name = $(
+      '#page_product_detail > div.right_area.page_detail_product > div.right_contents.section_product_summary > span > em'
+    ).text();
+    price = $('#goods_price').text().trim();
+    console.log(price);
+    // price parsing - e.g. 110,000원 -> 110000
+    price = Number(
+      price
+        .slice(0, -1)
+        .split(',')
+        .reduce((a, b) => a + b)
+    );
+
+    sale_price = $(
+      '#sPrice > ul > li > span.txt_price_member.m_list_price'
+    ).text();
+    console.log(sale_price);
+    sale_price = Number(
+      sale_price
+        .slice(0, -1)
+        .split(',')
+        .reduce((a, b) => a + b)
+    );
+    shop_name = 'Musinsa';
+    shop_url = url;
+    // img_url = $("meta[property='og:image']").attr('content');
+    img_url = $('#detail_thumb > ul > li > img');
+
+    const new_product = {
+      product_name: product_name,
+      price: Number(price),
+      sale_price: sale_price,
+      shop_name: shop_name,
+      shop_url: shop_url,
+      img: img_url,
+    };
+    return new_product;
+  }
+
+  // seoul store
+  function brandi(html, url) {
+    let shop_name, img_url, product_name, price, sale_price, shop_url;
+    const $ = cheerio.load(html); // html load
+
+    shop_name = '브랜디';
+    shop_url = url;
+    img_url = $("meta[property='og:image']").attr('content');
+    product_name = $(
+      '#container > div > div.wrap-products-info > div.wrap-detail_info > div.detail_basic-info > div.detail_title_area > h1'
+    ).text();
+    price = $(
+      '#container > div > div.wrap-products-info > div.wrap-detail_info > div.detail_basic-info > div.detail-price-wrapper.hideFinalPriceSection > div > div > span > span'
+    ).text();
+    price = Number(price.split(',').reduce((a, b) => a + b));
+    sale_price = $(
+      '#container > div > div.wrap-products-info > div.wrap-detail_info > div.detail_basic-info > div.detail-price-wrapper.hideFinalPriceSection > div > div > em > span'
+    ).text();
+    sale_price = Number(sale_price.split(',').reduce((a, b) => a + b));
+
+    const new_product = {
+      product_name: product_name,
+      price: price,
+      sale_price: sale_price,
+      shop_name: shop_name,
+      shop_url: shop_url,
+      img: img_url,
+    };
+    console.log(new_product);
+
+    return new_product;
+  }
+
+  async function parse_product(url) {
+    let new_product;
+    console.log(url);
+    const split_url = url.split('/');
+    const cur_shop = split_url[2];
+    // 서비스 가능한 사이트만 req 요청 보내기
+    if (
+      ['www.wconcept.co.kr', 'store.musinsa.com', 'www.brandi.co.kr'].includes(
+        cur_shop
+      )
+    ) {
+      await axios
+        .get(url)
+        .then((dataa) => {
+          const html = dataa.data;
+          switch (cur_shop) {
+            case 'www.wconcept.co.kr':
+              new_product = w_concept(html, url);
+              break;
+            case 'store.musinsa.com':
+              new_product = musinsa(html, url);
+              break;
+            case 'www.brandi.co.kr':
+              new_product = brandi(html, url);
+              break;
+            default:
+              break;
+          }
+        })
+        .catch(
+          // 리퀘스트 실패 - then 보다 catch 가 먼저 실행됨..
+          console.log('get shopping mall html request is failed')
+        );
+    }
+    return new_product;
+  }
+
+  return (
+    <div className="popup">
+      <span>마음에 드는 옷을 골라주세요</span>
+      <div id="imageBox"></div>
+      <button>선택!</button>
+    </div>
+  );
+};
+
+export default Popup;
