@@ -2,8 +2,7 @@ import React from 'react';
 import './Popup.css';
 const cheerio = require('cheerio');
 const axios = require('axios');
-// var checkeddd;
-// let new_product_list;
+let new_product;
 
 const Popup = () => {
   chrome.tabs.query(
@@ -11,31 +10,30 @@ const Popup = () => {
     async function (tabs) {
       // console.log(tabs[0].url);
       const shopUrl = tabs[0].url;
-      const new_product = await parse_product(shopUrl);
-
+      new_product = await parse_product(shopUrl);
+      console.log(new_product);
       let imageBox = document.querySelector('#imageBox');
       let totalImg = '';
-      // function handleChange(e) {
-      //   checkeddd = e.target.value;
-      //   console.log(checkeddd);
-      // }
-      console.log(new_product.img);
-      // new_product_list = new_product.img;
 
-      // const chooseImg = (e) => {
-      //  console.log(e.target.value);
-      // };
-      for (let i = 0; i < new_product.img.length; i++) {
-        let imageUrl = new_product.img[i].attribs.src;
-        totalImg += `
-        <div className='imageCard'>
-        <img src='https:${imageUrl}' alt='img1'/>
-        <input type='radio' name='img' value=${i}>
-        <button id=${i} className='btns'>check!</button>
-        </div>
+      console.log(new_product.img);
+
+      let imageUrl = new_product.img;
+      totalImg = `
+        <img src=${imageUrl} alt='img1'/>
         `;
-      }
-      imageBox.innerHTML = totalImg;
+
+      // append child 방식으로 시도해보기
+      // for (let i = 0; i < new_product.img.length; i++) {
+      //   let imageUrl = new_product.img[i].attribs.src;
+      //   totalImg += `
+      //   <div className='imageCard'>
+      //   <img src='https:${imageUrl}' alt='img1'/>
+      //   <input type='radio' name='img' value=${i}>
+      //   <button id=${i} className='btns'>check!</button>
+      //   </div>
+      //   `;
+      // }
+      imageBox.innerHTML += totalImg;
     }
   );
   // w-concept
@@ -94,6 +92,8 @@ const Popup = () => {
     shop_url = url;
     // img_url = $("meta[property='og:image']").attr('content');
     img_url = $('#detail_thumb > ul > li > img');
+    const parsed_img_url = 'https:' + img_url[0].attribs.src;
+    console.log('img_url 뭘까?', 'https:' + img_url[0].attribs.src);
 
     const new_product = {
       product_name: product_name,
@@ -101,7 +101,7 @@ const Popup = () => {
       sale_price: sale_price,
       shop_name: shop_name,
       shop_url: shop_url,
-      img: img_url,
+      img: parsed_img_url,
     };
     return new_product;
   }
@@ -175,12 +175,26 @@ const Popup = () => {
     }
     return new_product;
   }
-
+  function handleClick(event) {
+    console.log('np', new_product);
+    axios
+      .post('http://127.0.0.1:8000/privatebasket', {
+        token:
+          'eyJhbGciOiJIUzI1NiJ9.NjIwYjJiMWYzNmI4NzVlMjQ0ZmFkMmU0.nQU7sj52UYFdJbF1x5qEDXyiiZhhQnyN1vZkALqZa_0',
+        products: [new_product],
+      })
+      .then((Response) => {
+        console.log('save success:', Response.data);
+      })
+      .catch((Error) => {
+        console.log(Error);
+      });
+  }
   return (
     <div className="popup">
-      <span>마음에 드는 옷을 골라주세요</span>
+      <span>이 옷을 내 장바구니에 넣으시겠습니까?</span>
       <div id="imageBox"></div>
-      <button>선택!</button>
+      <button onClick={handleClick}>전송하기</button>
     </div>
   );
 };
