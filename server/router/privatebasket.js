@@ -61,6 +61,15 @@ basketRouter.post('/', async (req, res) => {
   res.send('success post new product in private basket');
 });
 
+basketRouter.post('/basket', async (req, res) => {
+  const basket_user = await User.findOne({
+    token: req.body.token,
+  });
+  console.log(basket_user.products);
+  res
+    .send(basket_user.products);
+})
+
 // delete helper
 async function deleteProduct(token, products, shop_url) {
   const new_products = products?.filter(
