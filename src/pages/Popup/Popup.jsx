@@ -191,6 +191,7 @@ const Popup = () => {
     }
     return new_product;
   }
+
   function handleClick(event) {
     console.log('np', new_product);
     var authToken = '';
@@ -210,11 +211,32 @@ const Popup = () => {
         });
     });
   }
+
+  function cartClick(event) {
+    console.log('카트 입니다');
+    var authToken = '';
+    chrome.storage.local.get(['userStatus'], function (items) {
+      authToken = items.userStatus;
+      console.log(`authToken??? : ${authToken}`);
+      axios
+        .post('http://127.0.0.1:8000/privatebasket/basket', {
+          token: authToken,
+        })
+        .then((Response) => {
+          console.log('save success:', Response.data);
+        })
+        .catch((Error) => {
+          console.log(Error);
+        });
+    });
+  }
+
   return (
     <div className="popup">
       <span>이 옷을 내 장바구니에 넣으시겠습니까?</span>
       <div id="imageBox"></div>
       <button onClick={handleClick}>전송하기</button>
+      <button onClick={cartClick}>장바구니 확인하기</button>
     </div>
   );
 };
