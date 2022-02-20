@@ -5,6 +5,22 @@ const axios = require('axios');
 let new_product;
 
 const Popup = () => {
+  console.log('befor hi');
+  chrome.runtime.sendMessage(
+    {
+      message: 'userStatus',
+    },
+    (response) => {
+      if (response.message === 'success') {
+        console.log('로그인 성공');
+      } else if (response.message === 'login') {
+        console.log('로그인하세요');
+        alert('로그인 하세요.');
+      }
+    }
+  );
+  console.log('after hi');
+
   chrome.tabs.query(
     { currentWindow: true, active: true },
     async function (tabs) {
@@ -177,18 +193,22 @@ const Popup = () => {
   }
   function handleClick(event) {
     console.log('np', new_product);
-    axios
-      .post('http://127.0.0.1:8000/privatebasket', {
-        token:
-          'eyJhbGciOiJIUzI1NiJ9.NjIwYjJiMWYzNmI4NzVlMjQ0ZmFkMmU0.nQU7sj52UYFdJbF1x5qEDXyiiZhhQnyN1vZkALqZa_0',
-        products: [new_product],
-      })
-      .then((Response) => {
-        console.log('save success:', Response.data);
-      })
-      .catch((Error) => {
-        console.log(Error);
-      });
+    var authToken = '';
+    chrome.storage.local.get(['userStatus'], function (items) {
+      authToken = items.userStatus;
+      console.log(`hihihihihi : ${authToken}`);
+      axios
+        .post('http://127.0.0.1:8000/privatebasket', {
+          token: authToken,
+          products: [new_product],
+        })
+        .then((Response) => {
+          console.log('save success:', Response.data);
+        })
+        .catch((Error) => {
+          console.log(Error);
+        });
+    });
   }
   return (
     <div className="popup">

@@ -190,6 +190,12 @@ var options = {
       chunks: ['panel'],
       cache: false,
     }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src', 'pages', 'Login', 'index.html'),
+      filename: 'Login.html',
+      chunks: ['Login'],
+      cache: false,
+    }),
   ],
   infrastructureLogging: {
     level: 'info',
