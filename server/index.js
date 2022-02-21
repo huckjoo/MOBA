@@ -65,6 +65,7 @@ io.on("connection", (socket) => {
       // 그게 아니면 rooms에 roomID를 key로 하는 배열 생성
       rooms[roomID] = [socket.id];
     }
+    console.log(rooms)
     // roomID를 key로 갖는 방에 나 말고 다른 socket.id가 있으면 다른 user임
     const otherUser = rooms[roomID].find((id) => id !== socket.id);
     if (otherUser) {
@@ -96,7 +97,6 @@ io.on("connection", (socket) => {
 
   socket.on("mousemove", (data) => {
     // console.log("receive mouse", data);
-    // socket.broadcast.emit("new-mouse", data);
 
     data.id = socket.id;
     socket.broadcast.emit("moving", data);
@@ -104,6 +104,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("disconnect", socket.id);
+    console.log(socket.rooms);
     delete rooms[socket.id];
     console.log(rooms);
     socket.broadcast.emit("clientdisconnect", socket.id);

@@ -105,8 +105,8 @@ basketRouter.get('/:id', async (req, res) => {
     token: req.id,
   });
   try {
-    console.log(cur_user);
-    console.log(cur_user.products);
+    // console.log(cur_user);
+    // console.log(cur_user.products);
 
     res.send(cur_user.products);
   } catch (error) {

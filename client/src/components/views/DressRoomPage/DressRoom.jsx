@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { fabric } from 'fabric';
-import { v1 as uuid } from 'uuid';
-import io from 'socket.io-client';
-import { useHistory, useParams, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
-import Cookies from 'universal-cookie';
+import React, { useEffect, useState, useRef } from "react";
+import { fabric } from "fabric";
+import { v1 as uuid } from "uuid";
+import io from "socket.io-client";
+import { useHistory, useParams, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import Cookies from "universal-cookie";
 import {
   emitMouse,
   emitModify,
@@ -17,18 +17,18 @@ import {
   getPointer,
   socketConnect,
   deleteMouse,
-} from './socket';
+} from "./socket";
 
-import styles from './DressRoom.module.css';
+import styles from "./DressRoom.module.css";
 
-import { BsCameraVideoFill, BsCameraVideoOffFill } from 'react-icons/bs';
-import { BsFillMicFill, BsFillMicMuteFill } from 'react-icons/bs';
-import { GoUnmute, GoMute } from 'react-icons/go';
-import ClothesLoading from '../../loading/ClothesLoading';
-import { Helmet } from 'react-helmet';
+import { BsCameraVideoFill, BsCameraVideoOffFill } from "react-icons/bs";
+import { BsFillMicFill, BsFillMicMuteFill } from "react-icons/bs";
+import { GoUnmute, GoMute } from "react-icons/go";
+import ClothesLoading from "../../loading/ClothesLoading";
+import { Helmet } from "react-helmet";
 
 const DressRoom = (props) => {
-  const [canvas, setCanvas] = useState('');
+  const [canvas, setCanvas] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
@@ -45,29 +45,48 @@ const DressRoom = (props) => {
   const userStream = useRef();
   const senders = useRef([]);
   const roomID = useParams().roomID;
-  let socket;
-  let flag = true;
-  if (flag) {
-    flag = false;
-    console.log("try connect");
-    socket = socketConnect();
-    socketRef.current = socket;
-  }
+  const mouseChannel = useRef();
+  const objChannel = useRef();
 
   function getCookie(name) {
     const cookies = new Cookies();
     return cookies.get(name);
   }
-  const token = getCookie('x_auth');
+  const token = getCookie("x_auth");
 
   const initCanvas = (width, height) =>
-    new fabric.Canvas('canvas', {
+    new fabric.Canvas("canvas", {
       width: width,
       height: height,
-      backgroundColor: 'pink',
+      backgroundColor: "pink",
     });
 
-  useEffect(() => {
+  function handleRecievedMouse(data) {
+    data = JSON.parse(data);
+    console.log("handle Mouse dc message", data);
+    modifyMouse(canvas, data);
+  }
+
+  function handleRecievedObj(data) {
+    data = JSON.parse(data);
+    console.log("handle Obj dc message", data);
+    switch (data.order) {
+      case "addObj":
+        console.log("receive addOBJ")
+        break;
+      case "addImg":
+        console.log("receive addIMG")
+          break;
+      case "modify":
+        console.log("receive modify")
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+  useEffect(async () => {
     // setIsLoading(true);
     const canvasWidth = canvasRef.current.offsetWidth;
     const canvasHeight = canvasRef.current.offsetHeight;
@@ -77,24 +96,34 @@ const DressRoom = (props) => {
     setCanvas(initCanvas(canvasWidth, canvasHeight));
     getPointer();
 
-    navigator.mediaDevices
+    await navigator.mediaDevices
       .getUserMedia({ audio: true, video: true }) // 사용자의 media data를 stream으로 받아옴(video, audio)
-      .then(stream => {
+      .then((stream) => {
         console.log("rtc socket");
         userVideo.current.srcObject = stream; // video player에 그 stream을 설정함
         userStream.current = stream; // userStream이라는 변수에 stream을 담아놓음
-        // socketRef.current = io.connect("/");
+        socketRef.current = io.connect("/");
         socketRef.current.emit("join room", roomID); // roomID를 join room을 통해 server로 전달함
-        socketRef.current.on("other user", userID => {
+        socketRef.current.on("other user", (userID) => {
+          console.log("ohter user");
           callUser(userID);
+          mouseChannel.current = peerRef.current.createDataChannel("mouse");
+          mouseChannel.current.addEventListener("message", (event) => {
+            handleRecievedMouse(event.data);
+          });
+          objChannel.current = peerRef.current.createDataChannel("obj");
+          objChannel.current.addEventListener("message", (event) => {
+            handleRecievedObj(event.data);
+          });
           otherUser.current = userID;
         });
-        socketRef.current.on("user joined", userID => {
+        socketRef.current.on("user joined", (userID) => {
+          console.log("user joined!!!");
           otherUser.current = userID;
         });
-        socketRef.current.on('offer', handleRecieveCall);
-        socketRef.current.on('answer', handleAnswer);
-        socketRef.current.on('ice-candidate', handleNewICECandidateMsg);
+        socketRef.current.on("offer", handleRecieveCall);
+        socketRef.current.on("answer", handleAnswer);
+        socketRef.current.on("ice-candidate", handleNewICECandidateMsg);
       });
 
     setIsLoading(false);
@@ -113,62 +142,74 @@ const DressRoom = (props) => {
   }, []);
 
   useEffect(() => {
-    // if (flag){
-    //   flag = false;
-    //   console.log("try connect")
-    //   socket = socketConnect();
-    // }
     if (canvas) {
-      canvas.on('object:modified', function (options) {
+      canvas.on("object:modified", function (options) {
         if (options.target) {
           const modifiedObj = {
             obj: options.target,
             id: options.target.id,
+            order: "modify"
           };
-          emitModify(modifiedObj, socket);
+          try {
+            console.log("dc modobj send");
+            objChannel.current.send(JSON.stringify(modifiedObj));
+          } catch (error) {}
+          // emitModify(modifiedObj, socketRef.current);
         }
       });
 
-      canvas.on('object:moving', function (options) {
+      canvas.on("object:moving", function (options) {
         if (options.target) {
           const modifiedObj = {
             obj: options.target,
             id: options.target.id,
+            order: "modify"
           };
-          emitModify(modifiedObj, socket);
+          try {
+            console.log("dc modobj send");
+            objChannel.current.send(JSON.stringify(modifiedObj));
+          } catch (error) {}
+          // emitModify(modifiedObj, socketRef.current);
         }
       });
 
-      canvas.on('mouse:move', function (options) {
+      canvas.on("mouse:move", function (options) {
         const mouseobj = {
           clientX: options.e.clientX,
           clientY: options.e.clientY,
         };
-        emitMouse(mouseobj, socket);
+        try {
+          console.log("dc mouse send");
+          mouseobj.id = socketRef.current.id;
+          mouseChannel.current.send(JSON.stringify(mouseobj));
+        } catch (error) {}
+        // emitMouse(mouseobj, socketRef.current);
       });
 
-      console.log('canvas socket:', socket);
-      modifyObj(canvas, socket);
-      addObj(canvas, socket);
-      modifyMouse(canvas, socket);
+      console.log("canvas socket:", socketRef.current);
+      try {
+        modifyObj(canvas, socketRef.current);
+        addObj(canvas, socketRef.current);
+        modifyMouse(canvas, socketRef.current);
+      } catch (error) {}
     }
   }, [canvas]);
 
-  const addShape = e => {
+  const addShape = (e) => {
     let type = e.target.name;
     let object;
 
-    if (type === 'rectangle') {
+    if (type === "rectangle") {
       object = new fabric.Rect({
         height: 75,
         width: 150,
       });
-    } else if (type === 'triangle') {
+    } else if (type === "triangle") {
       object = new fabric.Triangle({
         width: 100,
         height: 100,
       });
-    } else if (type === 'circle') {
+    } else if (type === "circle") {
       object = new fabric.Circle({
         radius: 50,
       });
@@ -177,17 +218,20 @@ const DressRoom = (props) => {
     object.set({ id: uuid() });
     canvas.add(object);
     console.log(object);
-    emitAdd({ obj: object, id: object.id }, socket);
+    emitAdd({ obj: object, id: object.id }, socketRef.current);
     canvas.renderAll();
   };
 
   const addImg = (e, url, canvi) => {
     e.preventDefault();
-    new fabric.Image.fromURL(url, img => {
+    new fabric.Image.fromURL(url, (img) => {
       console.log(img);
-      console.log('sender', img._element.currentSrc);
+      console.log("sender", img._element.currentSrc);
       img.set({ id: uuid() });
-      emitAdd({ obj: img, id: img.id, url: img._element.currentSrc }, socket);
+      emitAdd(
+        { obj: img, id: img.id, url: img._element.currentSrc },
+        socketRef.current
+      );
       img.scale(0.75);
       canvi.add(img);
       canvi.renderAll();
@@ -196,7 +240,7 @@ const DressRoom = (props) => {
 
   const deleteShape = () => {
     console.log(
-      canvas.getActiveObjects().forEach(obj => {
+      canvas.getActiveObjects().forEach((obj) => {
         canvas.remove(obj);
       })
     );
@@ -205,14 +249,14 @@ const DressRoom = (props) => {
 
   // ---------- 카카오톡 공유하기 ----------
   useEffect(() => {
-    window.Kakao.init('c45ed7c54965b8803ada1b6e2f293f4f');
+    window.Kakao.init("c45ed7c54965b8803ada1b6e2f293f4f");
   }, []);
 
   function copyLink() {
     let currentUrl = window.document.location.href; //복사 잘됨
     navigator.clipboard.writeText(currentUrl);
-    toast.success('초대링크 복사 완료!', {
-      position: 'bottom-center',
+    toast.success("초대링크 복사 완료!", {
+      position: "bottom-center",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -223,18 +267,18 @@ const DressRoom = (props) => {
 
     const shareKakao = () => {
       window.Kakao.Link.sendDefault({
-        objectType: 'feed',
+        objectType: "feed",
         content: {
-          title: '모바',
-          description: '친구랑 코디하기',
-          imageUrl: '#',
+          title: "모바",
+          description: "친구랑 코디하기",
+          imageUrl: "#",
           link: {
             webUrl: window.location.href,
           },
         },
         buttons: [
           {
-            title: '웹으로 이동',
+            title: "웹으로 이동",
             link: {
               webUrl: window.location.href,
             },
@@ -275,20 +319,27 @@ const DressRoom = (props) => {
   // ---------- webTRC video call ----------
   function callUser(userID) {
     peerRef.current = createPeer(userID);
+    console.log("calluser!!");
     //senders에 넣어준다 - 중요!
-    userStream.current.getTracks().forEach(track => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
+    userStream.current
+      .getTracks()
+      .forEach((track) =>
+        senders.current.push(
+          peerRef.current.addTrack(track, userStream.current)
+        )
+      );
   }
 
   function createPeer(userID) {
     const peer = new RTCPeerConnection({
       iceServers: [
         {
-          urls: 'stun:stun.stunprotocol.org',
+          urls: "stun:stun.stunprotocol.org",
         },
         {
-          urls: 'turn:numb.viagenie.ca',
-          credential: 'muazkh',
-          username: 'webrtc@live.com',
+          urls: "turn:numb.viagenie.ca",
+          credential: "muazkh",
+          username: "webrtc@live.com",
         },
       ],
     });
@@ -303,7 +354,7 @@ const DressRoom = (props) => {
   function handleNegotiationNeededEvent(userID) {
     peerRef.current
       .createOffer()
-      .then(offer => {
+      .then((offer) => {
         return peerRef.current.setLocalDescription(offer);
       })
       .then(() => {
@@ -312,23 +363,48 @@ const DressRoom = (props) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         };
-        socketRef.current.emit('offer', payload);
+        socketRef.current.emit("offer", payload);
       })
-      .catch(e => console.log(e));
+      .catch((e) => console.log(e));
   }
 
   function handleRecieveCall(incoming) {
     peerRef.current = createPeer();
+    peerRef.current.addEventListener("datachannel", (event) => {
+      console.log("peerRef.event.channel", event.channel.label);
+      switch (event.channel.label) {
+        case "mouse":
+          mouseChannel.current = event.channel;
+          mouseChannel.current.addEventListener("message", (event) => {
+            handleRecievedMouse(event.data);
+          });
+          break;
+        case "obj":
+          objChannel.current = event.channel;
+          objChannel.current.addEventListener("message", (event) => {
+            handleRecievedObj(event.data);
+          });
+          break;
+        default:
+          break;
+      }
+    });
     const desc = new RTCSessionDescription(incoming.sdp);
     peerRef.current
       .setRemoteDescription(desc)
       .then(() => {
-        userStream.current.getTracks().forEach(track => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
+        userStream.current
+          .getTracks()
+          .forEach((track) =>
+            senders.current.push(
+              peerRef.current.addTrack(track, userStream.current)
+            )
+          );
       })
       .then(() => {
         return peerRef.current.createAnswer();
       })
-      .then(answer => {
+      .then((answer) => {
         return peerRef.current.setLocalDescription(answer);
       })
       .then(() => {
@@ -337,13 +413,13 @@ const DressRoom = (props) => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         };
-        socketRef.current.emit('answer', payload);
+        socketRef.current.emit("answer", payload);
       });
   }
 
   function handleAnswer(message) {
     const desc = new RTCSessionDescription(message.sdp);
-    peerRef.current.setRemoteDescription(desc).catch(e => console.log(e));
+    peerRef.current.setRemoteDescription(desc).catch((e) => console.log(e));
   }
 
   function handleICECandidateEvent(e) {
@@ -352,14 +428,14 @@ const DressRoom = (props) => {
         target: otherUser.current,
         candidate: e.candidate,
       };
-      socketRef.current.emit('ice-candidate', payload);
+      socketRef.current.emit("ice-candidate", payload);
     }
   }
 
   function handleNewICECandidateMsg(incoming) {
     const candidate = new RTCIceCandidate(incoming);
 
-    peerRef.current.addIceCandidate(candidate).catch(e => console.log(e));
+    peerRef.current.addIceCandidate(candidate).catch((e) => console.log(e));
   }
 
   function handleTrackEvent(e) {
@@ -476,13 +552,26 @@ const DressRoom = (props) => {
                   video 1
                 </video>
                 <div className={styles.control_box1}>
-                  <button className={(styles.cameraBtn, styles.controlBtn)} onClick={HandleCameraBtnClick}>
-                    {isCameraOn ? <BsCameraVideoFill /> : <BsCameraVideoOffFill />}
+                  <button
+                    className={(styles.cameraBtn, styles.controlBtn)}
+                    onClick={HandleCameraBtnClick}
+                  >
+                    {isCameraOn ? (
+                      <BsCameraVideoFill />
+                    ) : (
+                      <BsCameraVideoOffFill />
+                    )}
                   </button>
-                  <button className={(styles.micBtn, styles.controlBtn)} onClick={HandleMicBtnClick}>
+                  <button
+                    className={(styles.micBtn, styles.controlBtn)}
+                    onClick={HandleMicBtnClick}
+                  >
                     {isMicOn ? <BsFillMicFill /> : <BsFillMicMuteFill />}
                   </button>
-                  <button className={(styles.muteBtn, styles.controlBtn)} onClick={HandleSoundBtnClick}>
+                  <button
+                    className={(styles.muteBtn, styles.controlBtn)}
+                    onClick={HandleSoundBtnClick}
+                  >
                     {isSoundOn ? <GoUnmute /> : <GoMute />}
                   </button>
                 </div>
