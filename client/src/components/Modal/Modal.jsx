@@ -40,14 +40,14 @@ const Modal = (props) => {
           description: inputs.text,
           imageUrl: '#',
           link: {
-            webUrl: `http://localhost:3000/vote/${id}`,
+            webUrl: `http://moba.today:3000/vote/${id}`,
           },
         },
         buttons: [
           {
             title: '투표하기로 이동',
             link: {
-              webUrl: `http://localhost:3000/vote/${id}`,
+              webUrl: `http://moba.today:3000/vote/${id}`,
             },
           },
         ],
