@@ -256,3 +256,37 @@
 .copyBtn {
   color: black;
 }
+
+/* small 시작 */
+.ScontainerProduct {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  margin-top: 5px;
+  cursor: pointer;
+}
+.ScontainerImg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: center;
+  position: relative;
+}
+
+.SproductImg {
+  height: 100px;
+  width: 100px;
+  border-radius: 10%;
+}
+.SiconBox {
+  position: absolute;
+  visibility: hidden;
+}
+
+.ScontainerImg:hover {
+  opacity: 0.7;
+}
+.ScontainerImg:hover > .SiconBox {
+  visibility: visible;
+  opacity: 1;
+}
