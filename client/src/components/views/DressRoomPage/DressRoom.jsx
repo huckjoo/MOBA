@@ -97,6 +97,24 @@ const DressRoom = (props) => {
         path.setCoords();
         canvas.add(path);
         break;
+      case 'selected':
+        canvas.getObjects().forEach((object) => {
+          console.log('data : ', data);
+          if (object.id === data.id) {
+            console.log('obj : ', object);
+            object.selectable = false;
+          }
+        });
+        break;
+      case 'deselected':
+        canvas.getObjects().forEach((object) => {
+          console.log('data : ', data);
+          if (object.id === data.id) {
+            console.log('obj : ', object);
+            object.selectable = true;
+          }
+        });
+        break;
       default:
         break;
     }
@@ -219,13 +237,33 @@ const DressRoom = (props) => {
       // selection:updated
       canvas.on('selection:cleared', (opt) => {
         console.log('selection:cleared', canvas.getActiveObjects(), opt);
+        opt.deselected.forEach((obj) => {
+          try {
+            itemChannel.current.send(JSON.stringify({ obj: obj, id: obj.id, order: 'deselected' }));
+          } catch (error) {
+            // 상대 없을 때 send 시 에러
+          }
+        });
       });
       canvas.on('selection:created', (opt) => {
         console.log('selection:created', canvas.getActiveObjects(), opt);
-        opt.selected.forEach((obj) => {});
+        opt.selected.forEach((obj) => {
+          try {
+            itemChannel.current.send(JSON.stringify({ obj: obj, id: obj.id, order: 'selected' }));
+          } catch (error) {
+            // 상대 없을 때 send 시 에러
+          }
+        });
       });
       canvas.on('selection:updated', (opt) => {
         console.log('selection:updated', canvas.getActiveObjects(), opt);
+        opt.selected.forEach((obj) => {
+          try {
+            itemChannel.current.send(JSON.stringify({ obj: obj, id: obj.id, order: 'selected' }));
+          } catch (error) {
+            // 상대 없을 때 send 시 에러
+          }
+        });
       });
 
       canvas.on('before:path:created', (options) => {
@@ -287,7 +325,7 @@ const DressRoom = (props) => {
         send시 error가 발생한다. try catch문을 통해 이를 방지한다. 
         */
         try {
-          console.log('dc mouse send', options);
+          // console.log('dc mouse send', options);
           mouseobj.id = socketRef.current.id;
           mouseChannel.current.send(JSON.stringify(mouseobj));
         } catch (error) {
