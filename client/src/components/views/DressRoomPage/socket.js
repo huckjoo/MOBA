@@ -33,6 +33,7 @@ export const emitMouse = (obj, socket) => {
   socket.emit("mousemove", {
     x: obj.clientX,
     y: obj.clientY,
+    time: obj.time,
   });
   // }
   lastEmit = now();
@@ -82,9 +83,14 @@ export const modifyObj = (canvas, socket) => {
 
 export const modifyMouse = (canvas, socket) => {
   socket.on("moving", function (data) {
-    // console.log("hello");
-    // console.log(data);
-    // console.log(pointerContainer);
+    let today = new Date();   
+    let hours = today.getHours(); // 시 * 60 * 60 * 1000
+    let minutes = today.getMinutes();  // 분 * 60 * 1000
+    let seconds = today.getSeconds();  // 초 * 1000
+    let milliseconds = today.getMilliseconds(); // 밀리초
+
+    const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
+    console.log("도착!!", timestamp - data.time);
     if (!clients.hasOwnProperty(data.id)) {
       pointers[data.id] = pointerContainer.appendChild(pointer.cloneNode());
     }
