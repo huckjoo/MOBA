@@ -57,10 +57,17 @@ const DressRoom = (props) => {
   const navigate = useNavigate();
 
   const handleRecievedMouse = (data) => {
+    let today = new Date();   
+    let hours = today.getHours(); // 시 * 60 * 60 * 1000
+    let minutes = today.getMinutes();  // 분 * 60 * 1000
+    let seconds = today.getSeconds();  // 초 * 1000
+    let milliseconds = today.getMilliseconds(); // 밀리초
+    
+    const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
     data = JSON.parse(data);
+    console.log("도착!!", timestamp - data.time);
     // data.clientX = data.clientX * canvasRef.current.offsetWidth;
     // data.clientY = data.clientY * canvasRef.current.offsetHeight;
-    console.log(canvasRef.current.offsetWidth, data.clientX);
     if (canvasRef.current.offsetWidth - 25 > data.clientX) {
       modifyMouse(data);
     }
@@ -318,8 +325,17 @@ const DressRoom = (props) => {
         send시 error가 발생한다. try catch문을 통해 이를 방지한다. 
         */
         try {
-          console.log('dc mouse send', options);
           mouseobj.id = socketRef.current.id;
+          let today = new Date();   
+          let hours = today.getHours(); // 시
+          let minutes = today.getMinutes();  // 분
+          let seconds = today.getSeconds();  // 초
+          let milliseconds = today.getMilliseconds(); // 밀리초
+
+          
+          const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
+          console.log("출발!!",timestamp);
+          mouseobj.time = timestamp;
           mouseChannel.current.send(JSON.stringify(mouseobj));
         } catch (error) {
           // 상대 없을 때 send 시 에러

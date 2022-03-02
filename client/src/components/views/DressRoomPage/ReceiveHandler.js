@@ -9,7 +9,7 @@ let pointers = {};
 // listeners
 export const addImg = (canvas, data) => {
   const { obj, id, url, product_info } = data;
-  console.log(obj.type);
+  // console.log(obj.type);
 
   if (obj.type === "image") {
     new fabric.Image.fromURL(url, img => {
