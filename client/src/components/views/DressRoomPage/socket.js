@@ -95,8 +95,12 @@ export const modifyMouse = (canvas, socket) => {
     total += timestamp - data.time
     count += 1
 
-    console.log("도착!!", timestamp - data.time, total);
-    console.log("avg: ", total/count);
+    // console.log("도착!!", timestamp - data.time, total);
+    if (count >= 10000) {
+      console.log("avg: ", total/count);
+      count = 0;
+      total = 0;
+    }
 
     if (!clients.hasOwnProperty(data.id)) {
       pointers[data.id] = pointerContainer.appendChild(pointer.cloneNode());
