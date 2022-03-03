@@ -55,19 +55,19 @@ const DressRoom = props => {
       //-------- test ------------------
       for (let index = 0; index < 10000; index++) {
         let today = new Date();   
-              let hours = today.getHours(); // 시 * 60 * 60 * 1000
-              let minutes = today.getMinutes();  // 분 * 60 * 1000
-              let seconds = today.getSeconds();  // 초 * 1000
-              let milliseconds = today.getMilliseconds(); // 밀리초
-      
-              const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
-              const mouseobj = {
-                clientX: 0,
-                clientY: 0,
-                time: timestamp
-              };
-              emitMouse(mouseobj, socketRef.current);
-        }
+        let hours = today.getHours(); // 시 * 60 * 60 * 1000
+        let minutes = today.getMinutes();  // 분 * 60 * 1000
+        let seconds = today.getSeconds();  // 초 * 1000
+        let milliseconds = today.getMilliseconds(); // 밀리초
+
+        const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
+        const mouseobj = {
+          clientX: 0,
+          clientY: 0,
+          time: timestamp
+        };
+        emitMouse(mouseobj, socketRef.current);
+      }
       // ----------------------------------
   }
 
@@ -162,7 +162,8 @@ const DressRoom = props => {
     }
   }, [canvas]);
 
-  const addShape = e => {
+  const addShape = async (e) => {
+    await test();
     let type = e.target.name;
     let object;
 
