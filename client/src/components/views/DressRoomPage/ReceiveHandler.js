@@ -13,12 +13,12 @@ export const addImg = (canvas, data) => {
 
   if (obj.type === "image") {
     new fabric.Image.fromURL(url, img => {
-      console.log("received data", data);
+      // console.log("received data", data);
       img.set({ id: id , product_info: product_info, borderColor: "orange", borderScaleFactor: 9, cornerColor: "black", cornerSize: 12, transparentCorners: false });
-      console.log("received img: ", img);
+      // console.log("received img: ", img);
       img.scale(0.75);
       img.set(obj);
-      console.log("received img after set(obj): ", img);
+      // console.log("received img after set(obj): ", img);
       img.setCoords();
       canvas.add(img);
       canvas.renderAll();

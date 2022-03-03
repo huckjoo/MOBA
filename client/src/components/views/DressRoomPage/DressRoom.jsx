@@ -56,6 +56,8 @@ const DressRoom = (props) => {
 
   const navigate = useNavigate();
 
+  let total = 0;
+  let cnt  = 0;
   const handleRecievedMouse = (data) => {
     let today = new Date();   
     let hours = today.getHours(); // 시 * 60 * 60 * 1000
@@ -65,7 +67,14 @@ const DressRoom = (props) => {
     
     const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
     data = JSON.parse(data);
-    console.log("도착!!", timestamp - data.time);
+    // console.log("도착!!", timestamp - data.time);
+    total +=  timestamp - data.time;
+    cnt += 1;
+    if (cnt >= 10000){
+      console.log("avg: ", total/cnt);
+      cnt = 0;
+      total = 0;
+    }
     // data.clientX = data.clientX * canvasRef.current.offsetWidth;
     // data.clientY = data.clientY * canvasRef.current.offsetHeight;
     if (canvasRef.current.offsetWidth - 25 > data.clientX) {
@@ -130,7 +139,7 @@ const DressRoom = (props) => {
 
   const handleRecievedItem = (data) => {
     data = JSON.parse(data);
-    console.log('handle item dc message', data);
+    // console.log('handle item dc message', data);
 
     setCanvas((canvas) => {
       needCanvas(canvas, data);
@@ -151,6 +160,28 @@ const DressRoom = (props) => {
       backgroundColor: 'white',
       isDrawingMode: false,
     });
+
+
+  async function test () {
+    //-------- test ------------------
+    for (let index = 0; index < 10000; index++) {
+      let today = new Date();   
+      let hours = today.getHours(); // 시 * 60 * 60 * 1000
+      let minutes = today.getMinutes();  // 분 * 60 * 1000
+      let seconds = today.getSeconds();  // 초 * 1000
+      let milliseconds = today.getMilliseconds(); // 밀리초
+
+      const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
+      const mouseobj = {
+        clientX: 0,
+        clientY: 0,
+        time: timestamp
+      };
+      mouseChannel.current.send(JSON.stringify(mouseobj));
+      // emitMouse(mouseobj, socketRef.current);
+    }
+    // ----------------------------------
+  }
 
   useEffect(async () => {
     console.log('useEffect []');
@@ -356,7 +387,8 @@ const DressRoom = (props) => {
     }
   }, [canvas]);
 
-  const HandleAddImgBtn = (e, item, canvi) => {
+  const HandleAddImgBtn = async (e, item, canvi) => {
+    await test();
     e.preventDefault();
     let url;
 
