@@ -81,6 +81,8 @@ export const modifyObj = (canvas, socket) => {
   });
 };
 
+let total = 0
+let count = 0
 export const modifyMouse = (canvas, socket) => {
   socket.on("moving", function (data) {
     let today = new Date();   
@@ -90,7 +92,12 @@ export const modifyMouse = (canvas, socket) => {
     let milliseconds = today.getMilliseconds(); // 밀리초
 
     const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
-    console.log("도착!!", timestamp - data.time);
+    total += timestamp - data.time
+    count += 1
+
+    console.log("도착!!", timestamp - data.time, total);
+    console.log("avg: ", total/count);
+
     if (!clients.hasOwnProperty(data.id)) {
       pointers[data.id] = pointerContainer.appendChild(pointer.cloneNode());
     }

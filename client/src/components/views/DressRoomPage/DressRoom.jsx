@@ -51,6 +51,26 @@ const DressRoom = props => {
       backgroundColor: "pink",
     });
 
+  async function test () {
+      //-------- test ------------------
+      for (let index = 0; index < 10000; index++) {
+        let today = new Date();   
+              let hours = today.getHours(); // 시 * 60 * 60 * 1000
+              let minutes = today.getMinutes();  // 분 * 60 * 1000
+              let seconds = today.getSeconds();  // 초 * 1000
+              let milliseconds = today.getMilliseconds(); // 밀리초
+      
+              const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
+              const mouseobj = {
+                clientX: 0,
+                clientY: 0,
+                time: timestamp
+              };
+              emitMouse(mouseobj, socketRef.current);
+        }
+      // ----------------------------------
+  }
+
   useEffect(() => {
     // setIsLoading(true);
     socketRef.current = io.connect("/");
