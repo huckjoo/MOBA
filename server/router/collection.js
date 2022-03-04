@@ -11,9 +11,13 @@ collectionRouter.get('/', (req, res) => {
   })
 })
 
-collectionRouter.post('/items', (req, res) => {
-  console.log('콜렉션 저장해주세요.')
-  console.log(req.body);
-})
-
+collectionRouter.post('/items', async (req, res) => {
+  const collector = await User.findOne({ token: req.body.token });
+  let new_items = [req.body.products]
+  await collector.collections?.map((items) => {
+    new_items.push(items);
+  })
+  collector.collections = new_items;
+  collector.save()
+});
 module.exports = collectionRouter

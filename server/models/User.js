@@ -34,6 +34,18 @@ const userSchema = mongoose.Schema({
   profileImage: {
     type: String,
   },
+  collections: [
+    [{
+      product_name: String,
+      price: Number,
+      sale_price: Number,
+      shop_name: String,
+      shop_url: String,
+      img: String,
+      removedBgImg: String,
+      category: String,
+    }]
+  ],
   products: [
     {
       product_name: String,

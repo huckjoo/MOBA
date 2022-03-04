@@ -750,10 +750,14 @@ const DressRoom = (props) => {
       console.log('add to my collection : ', obj);
       items.push(obj.product_info);
     });
-    axios.post(`/collection/items`, {
-      token: token,
-      products: items,
-    });
+    axios
+      .post(`/collection/items`, {
+        token: token,
+        products: items,
+      })
+      .then((response) => {
+        console.log('아이템 들어왔습니다.', response);
+      });
   };
 
   const mobaOnClickHandler = () => {
