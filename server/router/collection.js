@@ -20,4 +20,11 @@ collectionRouter.post('/items', async (req, res) => {
   collector.collections = new_items;
   collector.save()
 });
+
+collectionRouter.post('/', async (req, res) => {
+  console.log('콜렉션 리스트 요청입니다.')
+  const collector = await User.findOne({ token: req.body.token });
+  res.send(collector.collections);
+})
+
 module.exports = collectionRouter
