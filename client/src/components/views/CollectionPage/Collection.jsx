@@ -26,7 +26,6 @@ const Collection = () => {
     <>
       <h1>콜렉션 페이지</h1>
       <section>
-        {/* <div className={styles.infinitList}> */}
         <article>
           <div>
             <ul>
@@ -35,15 +34,7 @@ const Collection = () => {
               ))}
             </ul>
           </div>
-          <div>
-            <ul>
-              {productImg.reverse().map((item, index) => (
-                <img key={index} className={styles.itemImg} src={item} alt="img"></img>
-              ))}
-            </ul>
-          </div>
         </article>
-        {/* </div> */}
       </section>
     </>
   );
