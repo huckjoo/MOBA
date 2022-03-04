@@ -43,6 +43,7 @@ const userSchema = mongoose.Schema({
       shop_url: String,
       img: String,
       removedBgImg: String,
+      category: String,
     },
   ],
 });

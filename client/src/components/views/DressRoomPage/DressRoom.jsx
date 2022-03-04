@@ -5,6 +5,9 @@ import io from 'socket.io-client';
 import Cookies from 'universal-cookie';
 import ClothesLoading from '../../loading/ClothesLoading';
 
+// 발화자 표시
+import hark from 'hark';
+
 // Fabric JS
 import { fabric } from 'fabric';
 import { v1 as uuid } from 'uuid';
