@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import Cookies from 'universal-cookie';
 import ClothesLoading from '../../loading/ClothesLoading';
 
-// 발화자 표시
+// 발화자 표시 -> 후명이랑 해야지
 import hark from 'hark';
 
 // Fabric JS
@@ -30,6 +30,7 @@ import {
   BsCameraVideoOffFill,
   BsPencilFill,
   BsHandIndexThumb,
+  BsFillCollectionFill,
 } from 'react-icons/bs';
 import { BsFillMicFill, BsFillMicMuteFill, BsTrash } from 'react-icons/bs';
 import { GoUnmute, GoMute } from 'react-icons/go';
@@ -354,7 +355,7 @@ const DressRoom = (props) => {
         send시 error가 발생한다. try catch문을 통해 이를 방지한다. 
         */
         try {
-          console.log('dc mouse send', options);
+          // console.log('dc mouse send', options);
           mouseobj.id = socketRef.current.id;
           mouseChannel.current.send(JSON.stringify(mouseobj));
         } catch (error) {
@@ -742,6 +743,18 @@ const DressRoom = (props) => {
     canvas.freeDrawingBrush.color = 'black';
     canvas.freeDrawingBrush.width = 5;
   };
+  const CollectionItems = () => {
+    console.log('CollectionItems');
+    const items = [];
+    canvas.getActiveObjects().forEach((obj) => {
+      console.log('add to my collection : ', obj);
+      items.push(obj.product_info);
+    });
+    axios.post(`/collection/items`, {
+      token: token,
+      products: items,
+    });
+  };
 
   const mobaOnClickHandler = () => {
     navigate('/');
@@ -915,6 +928,14 @@ const DressRoom = (props) => {
                   <button className={styles.toolbarBtn} onClick={HandleDrawing}>
                     <BsPencilFill size="30" />
                   </button>
+                  {/* 컬렉션 기능 추가 */}
+                  <button
+                    className={styles.toolbarBtn}
+                    onClick={CollectionItems}
+                  >
+                    <BsFillCollectionFill size="30" />
+                  </button>
+                  {/* 컬렉션 기능 추가 */}
                 </div>
                 <ToastContainer
                   position="bottom-center"

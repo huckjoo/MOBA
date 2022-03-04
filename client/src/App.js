@@ -19,6 +19,7 @@ import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import DressRoom from './components/views/DressRoomPage/DressRoom';
 import Vote from './components/views/VotePage/Vote';
 import VoteResult from './components/views/VoteResultPage/VoteResult';
+import Collection from './components/views/CollectionPage/Collection';
 import { useEffect } from 'react';
 import SimpleSlider from './components/SimpleSlider/SimpleSlider';
 
@@ -43,6 +44,7 @@ function App() {
           <Route path="/vote/:roomID" element={<Vote />} />
           <Route path="/voteresult" element={<VoteResult />} />
           <Route path="/SimpleSlider" element={<SimpleSlider />} />
+          <Route path="/collection" element={<Collection />} />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </div>
