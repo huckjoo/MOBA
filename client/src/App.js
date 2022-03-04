@@ -1,11 +1,6 @@
 import React from 'react';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import ChooseShop from '../src/components/views/ChooseShopPage/ChooseShop';
 import CreateRoom from '../src/components/views/CreateRoomPage/CreateRoom.jsx';
@@ -22,6 +17,7 @@ import VoteResult from './components/views/VoteResultPage/VoteResult';
 import Collection from './components/views/CollectionPage/Collection';
 import { useEffect } from 'react';
 import SimpleSlider from './components/SimpleSlider/SimpleSlider';
+import PrivateBasket from './components/views/PrivateBasket/PrivateBasket';
 
 function App() {
   document.body.style.backgroundColor = 'white';
@@ -45,6 +41,7 @@ function App() {
           <Route path="/voteresult" element={<VoteResult />} />
           <Route path="/SimpleSlider" element={<SimpleSlider />} />
           <Route path="/collection" element={<Collection />} />
+          <Route path="/privateBasket" element={<PrivateBasket />} />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </div>
