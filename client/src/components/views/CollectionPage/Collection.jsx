@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import styles from './Collection.module.css';
 
 const Collection = () => {
   const [productImg, setProductImg] = useState([]);
@@ -23,10 +24,18 @@ const Collection = () => {
 
   return (
     <>
-      {productImg.map((item, index) => (
-        <img src={item} alt="img"></img>
-      ))}
       <h1>콜렉션 페이지</h1>
+      <section>
+        <article>
+          <div>
+            <ul>
+              {productImg.map((item, index) => (
+                <img key={index} className={styles.itemImg} src={item} alt="img"></img>
+              ))}
+            </ul>
+          </div>
+        </article>
+      </section>
     </>
   );
 };
