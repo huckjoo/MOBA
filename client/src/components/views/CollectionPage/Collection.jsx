@@ -51,17 +51,12 @@ const Collection = () => {
     <>
       <h1>콜렉션 페이지</h1>
       <div>여기는 콜렉션 이미지가 들어갑니다.</div>
-      <section>
-        <article>
-          <div>
-            <ul>
+      <section className={styles.sectionImg}>
+        <article className={styles.articleImg}>
+          <div className={styles.imgContainer}>
+            <ul className={styles.imgUl}>
               {productImg.map((item, index) => (
-                <img
-                  key={index}
-                  className={styles.itemImg}
-                  src={item}
-                  alt="img"
-                ></img>
+                <img key={index} className={styles.itemImg} src={item} alt="img"></img>
               ))}
             </ul>
           </div>
