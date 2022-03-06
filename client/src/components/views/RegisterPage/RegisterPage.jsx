@@ -1,21 +1,21 @@
-import React, { useState, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { registerUser } from "../../../_actions/user_action";
-import { useNavigate } from "react-router-dom";
-import Auth from "../../../hoc/auth";
-import styles from "./RegisterPage.module.css";
-import Header from "../../header/Header";
-import { v1 as uuid } from "uuid";
+import React, { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../../../_actions/user_action';
+import { useNavigate } from 'react-router-dom';
+import Auth from '../../../hoc/auth';
+import styles from './RegisterPage.module.css';
+import Header from '../../header/Header';
+import { v1 as uuid } from 'uuid';
 
 function RegisterPage(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [Username, setUsername] = useState("");
-    const [Password, setPassword] = useState("");
-    const [ConfirmPassword, setConfirmPassword] = useState("");
-    const [Name, setName] = useState("");
-    const [Email, setEmail] = useState("");
+    const [Username, setUsername] = useState('');
+    const [Password, setPassword] = useState('');
+    const [ConfirmPassword, setConfirmPassword] = useState('');
+    const [Name, setName] = useState('');
+    const [Email, setEmail] = useState('');
 
     const onUsernameHandler = (event) => {
         setUsername(event.currentTarget.value);
@@ -45,18 +45,18 @@ function RegisterPage(props) {
         const originalFile = imgRef.current.files[0];
         const fileReader = new FileReader();
         const imgObject = new Image();
-        const canvas = document.querySelector("#myCanvas");
-        const originalImg = document.querySelector(".img__original");
+        const canvas = document.querySelector('#myCanvas');
+        const originalImg = document.querySelector('.img__original');
         fileReader.readAsDataURL(originalFile);
         fileReader.onload = async (event) => {
             imgObject.src = event.target.result;
             imgObject.onload = async () => {
                 originalImg.src = imgObject.src;
                 await Nooki(canvas, originalImg);
-                const removedBgImg = canvas.toDataURL("image/png");
-                const target = "/s3Url/" + uuid();
+                const removedBgImg = canvas.toDataURL('image/png');
+                const target = '/s3Url/' + uuid();
                 const S3url = await fetch(target).then((res) => res.json());
-                let bstr = atob(removedBgImg?.split(",")[1]);
+                let bstr = atob(removedBgImg?.split(',')[1]);
                 let n = bstr.length;
                 let u8arr = new Uint8Array(n);
 
@@ -64,44 +64,26 @@ function RegisterPage(props) {
                     u8arr[n] = bstr.charCodeAt(n);
                 }
 
-                let file = new File([u8arr], "imgFile.png", { type: "mime" });
+                let file = new File([u8arr], 'imgFile.png', { type: 'mime' });
                 await fetch(S3url.url, {
-                    method: "PUT",
+                    method: 'PUT',
                     headers: {
-                        "Content-Type": "multipart/form-data",
+                        'Content-Type': 'multipart/form-data',
                     },
                     body: file,
                 });
-                const imageUrl = S3url.url?.split("?")[0];
+                const imageUrl = S3url.url?.split('?')[0];
                 setImageUrl(imageUrl);
 
                 async function Nooki(canvas, originalImg) {
-                    let ctx = canvas.getContext("2d");
-                    console.log("hihihi", canvas, originalImg);
+                    let ctx = canvas.getContext('2d');
+                    console.log('hihihi', canvas, originalImg);
                     canvas.width = originalImg.width;
                     canvas.height = originalImg.height;
-                    console.log(
-                        "hihihi",
-                        canvas,
-                        originalImg.width,
-                        originalImg.height,
-                        originalImg.naturalWidth,
-                        originalImg.naturalHeight
-                    );
-                    await ctx.drawImage(
-                        originalImg,
-                        0,
-                        0,
-                        canvas.width,
-                        canvas.height
-                    );
+                    console.log('hihihi', canvas, originalImg.width, originalImg.height, originalImg.naturalWidth, originalImg.naturalHeight);
+                    await ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
                     try {
-                        const _id = await ctx.getImageData(
-                            0,
-                            0,
-                            canvas.width,
-                            canvas.height
-                        );
+                        const _id = await ctx.getImageData(0, 0, canvas.width, canvas.height);
                         const pixels = _id.data;
 
                         let arr = [];
@@ -147,31 +129,15 @@ function RegisterPage(props) {
                                 for (let i = 0; i < 4; i++) {
                                     let new_x = current_x + dir_array[i][0];
                                     let new_y = current_y + dir_array[i][1];
-                                    if (
-                                        0 <= new_x &&
-                                        new_x < arr.length &&
-                                        0 <= new_y &&
-                                        new_y < arr[0].length
-                                    ) {
+                                    if (0 <= new_x && new_x < arr.length && 0 <= new_y && new_y < arr[0].length) {
                                         if (
                                             visited[new_x][new_y] === false &&
-                                            arr[new_x][new_y][0] >=
-                                                arr[current_x][current_y][0] -
-                                                    1 &&
-                                            arr[new_x][new_y][0] <=
-                                                arr[current_x][current_y][0] +
-                                                    1 &&
-                                            arr[new_x][new_y][1] >=
-                                                arr[current_x][current_y][1] -
-                                                    1 &&
-                                            arr[new_x][new_y][1] <=
-                                                arr[current_x][current_y][1] +
-                                                    1 &&
-                                            arr[new_x][new_y][2] >=
-                                                arr[current_x][current_y][2] -
-                                                    1 &&
-                                            arr[new_x][new_y][2] <=
-                                                arr[current_x][current_y][2] + 1
+                                            arr[new_x][new_y][0] >= arr[current_x][current_y][0] - 1 &&
+                                            arr[new_x][new_y][0] <= arr[current_x][current_y][0] + 1 &&
+                                            arr[new_x][new_y][1] >= arr[current_x][current_y][1] - 1 &&
+                                            arr[new_x][new_y][1] <= arr[current_x][current_y][1] + 1 &&
+                                            arr[new_x][new_y][2] >= arr[current_x][current_y][2] - 1 &&
+                                            arr[new_x][new_y][2] <= arr[current_x][current_y][2] + 1
                                         ) {
                                             queue.push([new_x, new_y]);
                                         }
@@ -195,7 +161,7 @@ function RegisterPage(props) {
                         await ctx.putImageData(_id, 0, 0);
                         return ctx;
                     } catch {
-                        alert("이미지 업로드에 실패했습니다.");
+                        alert('이미지 업로드에 실패했습니다.');
                     }
                 }
             };
@@ -211,7 +177,7 @@ function RegisterPage(props) {
         event.preventDefault();
 
         if (Password !== ConfirmPassword) {
-            return alert("패스워드와 패스워드 확인이 일치하지 않습니다.");
+            return alert('패스워드와 패스워드 확인이 일치하지 않습니다.');
         }
 
         let body = {
@@ -225,9 +191,9 @@ function RegisterPage(props) {
         dispatch(registerUser(body)).then((response) => {
             console.log(response.payload);
             if (response.payload.success) {
-                navigate("/");
+                navigate('/');
             } else {
-                alert("회원가입에 실패하였습니다.");
+                alert('회원가입에 실패하였습니다.');
             }
         });
     };
@@ -236,79 +202,42 @@ function RegisterPage(props) {
         <>
             <Header />
             <div className={styles.container}>
-                <div style={{ display: "none" }}>
-                    <img className="img__original" alt="img" />
+                <div style={{ display: 'none' }}>
+                    <img className='img__original' alt='img' />
                     <h1>RemoveBackground Page</h1>
-                    <canvas id="myCanvas"></canvas>
+                    <canvas id='myCanvas'></canvas>
                 </div>
                 <div className={styles.loginBox}>
                     <div className={styles.loginContents}>
                         <div className={styles.loginText}>
                             <span>회원가입</span>
                         </div>
-                        <form
-                            className={styles.loginForm}
-                            encType="multipart/form-data"
-                            onSubmit={onSubmitHandler}
-                        >
+                        <form className={styles.loginForm} encType='multipart/form-data' onSubmit={onSubmitHandler}>
                             {/* 프로필 이미지 업로드 : 시작 */}
-                            <input
-                                style={{ display: "none" }}
-                                type="file"
-                                ref={imgRef}
-                                onChange={onChangeImage}
-                            />
+                            <input style={{ display: 'none' }} type='file' ref={imgRef} onChange={onChangeImage} />
                             <div
                                 className={styles.inputs}
                                 onClick={() => {
                                     onClickFileBtn();
                                 }}
                             >
-                                <img
-                                    className={styles.uploadImage}
-                                    src={ImageUrl ? ImageUrl : ""}
-                                />
+                                <img className={styles.uploadImage} src={ImageUrl ? ImageUrl : ''} />
                                 프로필 이미지를 업로드해주세요.
                             </div>
                             {/* 프로필 이미지 업로드 : 끝 */}
 
-                            <input
-                                autoFocus
-                                className={styles.inputs}
-                                type="text"
-                                value={Username}
-                                onChange={onUsernameHandler}
-                                placeholder="아이디"
-                            />
+                            <input autoFocus className={styles.inputs} type='text' value={Username} onChange={onUsernameHandler} placeholder='아이디' />
+                            <input className={styles.inputs} type='password' value={Password} onChange={onPasswordHandler} placeholder='비밀번호(5글자 이상)' />
                             <input
                                 className={styles.inputs}
-                                type="password"
-                                value={Password}
-                                onChange={onPasswordHandler}
-                                placeholder="비밀번호(5글자 이상)"
-                            />
-                            <input
-                                className={styles.inputs}
-                                type="password"
+                                type='password'
                                 value={ConfirmPassword}
                                 onChange={onConfirmPasswordHandler}
-                                placeholder="비밀번호 확인"
+                                placeholder='비밀번호 확인'
                             />
-                            <input
-                                className={styles.inputs}
-                                type="text"
-                                value={Name}
-                                onChange={onNameHandler}
-                                placeholder="이름"
-                            />
-                            <input
-                                className={styles.inputs}
-                                type="email"
-                                value={Email}
-                                onChange={onEmailHandler}
-                                placeholder="이메일 주소"
-                            />
-                            <button className={styles.buttons} type="submit">
+                            <input className={styles.inputs} type='text' value={Name} onChange={onNameHandler} placeholder='이름' />
+                            <input className={styles.inputs} type='email' value={Email} onChange={onEmailHandler} placeholder='이메일 주소' />
+                            <button className={styles.buttons} type='submit'>
                                 회원가입
                             </button>
                         </form>
@@ -318,4 +247,4 @@ function RegisterPage(props) {
         </>
     );
 }
-export default Auth(RegisterPage, "register");
+export default Auth(RegisterPage, 'register');
