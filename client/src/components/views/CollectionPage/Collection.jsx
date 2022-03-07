@@ -14,9 +14,10 @@ const Collection = () => {
   }
   const token = getCookie('x_auth');
 
-  const [productImg, setProductImg] = useState([]);
+  const [othersProductImg, setProductImg] = useState([]);
   const [collectionImg, setCollectionImg] = useState([]);
   const [myCollection, setMyCollection] = useState(false);
+
   useEffect(async () => {
     let productImg = [];
     await axios.get('/collection').then((response) => {
@@ -27,9 +28,34 @@ const Collection = () => {
           productImg.push(collection);
         }
       }
-      setProductImg(productImg);
+
+      let othersProductImg = [];
+
+      for (let othersProducts of productImg) {
+        let othersCollectionSet = {
+          outer: '',
+          top: '',
+          bottom: '',
+          shoes: '',
+        };
+
+        for (let othersProduct of othersProducts) {
+          if (othersProduct.category === '아우터') {
+            othersCollectionSet.outer = othersProduct;
+          } else if (othersProduct.category === '상의') {
+            othersCollectionSet.top = othersProduct;
+          } else if (othersProduct.category === '하의') {
+            othersCollectionSet.bottom = othersProduct;
+          } else {
+            othersCollectionSet.shoes = othersProduct;
+          }
+        }
+        othersCollectionSet = Object.assign(othersCollectionSet, { name: othersProducts.name });
+        othersProductImg.push(othersCollectionSet);
+      }
+      setProductImg(othersProductImg);
+      console.log(othersProductImg, '이거 사용하면 됨 혁주야');
     });
-    console.log(productImg, 'productImg 얘 맞죠?');
   }, []);
 
   useEffect(async () => {
@@ -102,36 +128,32 @@ const Collection = () => {
             onClick={() => {
               setMyCollection(false);
             }}
+            className={myCollection ? styles.normal : styles.selected}
           >
             내 컬렉션
           </p>
           <p
+            className={!myCollection ? styles.normal : styles.selected}
             onClick={() => {
               setMyCollection(true);
             }}
           >
-            남 컬렉션
+            전체 컬렉션
           </p>
         </div>
         {!myCollection ? (
-          <SimpleSlider className={styles.slider} collectionImg={collectionImg} handleDelete={deleteCollection} />
+          <div className={styles.sliderBox}>
+            <SimpleSlider collectionImg={collectionImg} handleDelete={deleteCollection} />
+          </div>
         ) : (
           <div className={styles.otherContainer}>
-            {collectionImg &&
-              collectionImg.map((items, index) => (
+            {othersProductImg &&
+              othersProductImg.map((items, index) => (
                 <div key={index} className={styles.collection__card}>
-                  <div className={styles.collection__del__box}>
-                    <VscClose
-                      className={styles.i__collection__del}
-                      size={25}
-                      onClick={() => {
-                        deleteCollection(index);
-                      }}
-                    />
-                  </div>
+                  <span className={styles.creator}>Created by {items.name}</span>
                   <div className={styles.collectionSet}>
                     <img className={styles.collectionImgTop} src={items.top.removedBgImg} alt='img' />
-                    <div className='con-tooltip bottom'>
+                    <div className={`${styles.con__tooltip} ${styles.bottom}`}>
                       <AiFillPlusCircle className={styles.i__plus} />
                       <div
                         onClick={() => {
@@ -153,7 +175,7 @@ const Collection = () => {
                       </div>
                     </div>
                     <img className={styles.collectionImgBottom} src={items.bottom.removedBgImg} alt='img'></img>
-                    <div className='con-tooltip bottom con-bottom'>
+                    <div className={`${styles.con__tooltip} ${styles.bottom} ${styles.con__bottom}`}>
                       <AiFillPlusCircle className={styles.i__plus} />
                       <div
                         onClick={() => {
@@ -175,7 +197,7 @@ const Collection = () => {
                       </div>
                     </div>
                     <img className={styles.collectionImgShoes} src={items.shoes.removedBgImg} alt='img'></img>
-                    <div className='con-tooltip con-shoes'>
+                    <div className={`${styles.con__tooltip} ${styles.bottom} ${styles.con__shoes}`}>
                       <AiFillPlusCircle className={styles.i__plus} />
                       <div
                         onClick={() => {
