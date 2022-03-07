@@ -17,6 +17,7 @@ const voteRouter = require('./router/vote');
 const voteResultRouter = require('./router/voteResult');
 // 컬렉션 관련 //
 const collectionRouter = require('./router/collection');
+const cors = require('cors')
 
 const app = express();
 

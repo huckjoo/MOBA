@@ -84,7 +84,7 @@ const PrivateBasket = (props) => {
           {
             title: '투표하기로 이동',
             link: {
-              webUrl: `http://localhost:3000/vote/${id}`,
+              webUrl: `http://moba-shop.net:3000/vote/${id}`,
             },
           },
         ],
