@@ -53,7 +53,7 @@ const DressRoom = props => {
 
   async function test () {
       //-------- test ------------------
-      for (let index = 0; index < 10000; index++) {
+      for (let index = 0; index < 100000; index++) {
         let today = new Date();   
         let hours = today.getHours(); // 시 * 60 * 60 * 1000
         let minutes = today.getMinutes();  // 분 * 60 * 1000

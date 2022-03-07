@@ -96,7 +96,7 @@ export const modifyMouse = (canvas, socket) => {
     count += 1
 
     // console.log("도착!!", timestamp - data.time, total);
-    if (count >= 10000) {
+    if (count >= 100000) {
       console.log("avg: ", total/count);
       count = 0;
       total = 0;
