@@ -53,18 +53,13 @@ const DressRoom = (props) => {
 
   async function test() {
     //-------- test ------------------
-    for (let index = 0; index < 100; index++) {
-      let today = new Date();
-      let hours = today.getHours(); // 시 * 60 * 60 * 1000
-      let minutes = today.getMinutes(); // 분 * 60 * 1000
-      let seconds = today.getSeconds(); // 초 * 1000
-      let milliseconds = today.getMilliseconds(); // 밀리초
-
-      const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+    for (let index = 0; index < 10000; index++) {
+      
+      // const timestamp = Date.now();
       const mouseobj = {
         clientX: 0,
         clientY: 0,
-        time: timestamp,
+        time: 0,
       };
       emitMouse(mouseobj, socketRef.current);
     }
@@ -163,7 +158,6 @@ const DressRoom = (props) => {
   }, [canvas]);
 
   const addShape = async (e) => {
-    await test();
     let type = e.target.name;
     let object;
 
@@ -190,8 +184,9 @@ const DressRoom = (props) => {
     canvas.renderAll();
   };
 
-  const addImg = (e, url, canvi) => {
+  const addImg = async (e, url, canvi) => {
     e.preventDefault();
+    await test();
     new fabric.Image.fromURL(url, (img) => {
       // console.log(img);
       // console.log("sender", img._element.currentSrc);

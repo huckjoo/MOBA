@@ -81,27 +81,21 @@ export const modifyObj = (canvas, socket) => {
   });
 };
 
-
 let count = 0;
-let realTotal = [0,0];
+let realTotal = [0, 0];
+let first = 0;
 export const modifyMouse = (canvas, socket) => {
   socket.on('moving', function (data) {
-    let today = new Date();
-    let hours = today.getHours(); // 시 * 60 * 60 * 1000
-    let minutes = today.getMinutes(); // 분 * 60 * 1000
-    let seconds = today.getSeconds(); // 초 * 1000
-    let milliseconds = today.getMilliseconds(); // 밀리초
-
-    const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
-
     count += 1;
-    
-    realTotal[0] += 1;
-    realTotal[1] += timestamp - data.time;
-    
+    if (count === 1) {
+      first = Date.now();
+      console.log('first receive: ', first);
+    }
 
-    if (count === 1000) {
-      console.log("realTotal: ",realTotal, realTotal[1]/realTotal[0]);
+    if (count === 10000) {
+      const timestamp = Date.now();
+      console.log('end test time', timestamp);
+      console.log('duration', timestamp - first);
       count = 0;
     }
 
