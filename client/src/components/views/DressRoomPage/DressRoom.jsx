@@ -57,28 +57,41 @@ const DressRoom = (props) => {
   const navigate = useNavigate();
 
   let total = 0;
-  let cnt  = 0;
+  let cnt = 0;
+  let realtotal = [0, 0];
+  let first = 0;
   const handleRecievedMouse = (data) => {
-    let today = new Date();   
-    let hours = today.getHours(); // 시 * 60 * 60 * 1000
-    let minutes = today.getMinutes();  // 분 * 60 * 1000
-    let seconds = today.getSeconds();  // 초 * 1000
-    let milliseconds = today.getMilliseconds(); // 밀리초
-    
-    const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
-    data = JSON.parse(data);
-    // console.log("도착!!", timestamp - data.time);
-    total +=  timestamp - data.time;
     cnt += 1;
-    if (cnt >= 100000){
-      console.log("avg: ", total/cnt);
+    if (cnt === 1){
+      // let today = new Date();
+      // let hours = today.getHours(); // 시 * 60 * 60 * 1000
+      // let minutes = today.getMinutes(); // 분 * 60 * 1000
+      // let seconds = today.getSeconds(); // 초 * 1000
+      // let milliseconds = today.getMilliseconds(); // 밀리초
+      
+      // const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+      first = Date.now();
+      console.log("!!first receive time: ", first);
+    }
+    if (cnt == 10000) {
+      // data = JSON.parse(data);
+      // let today = new Date();
+      // let hours = today.getHours(); // 시 * 60 * 60 * 1000
+      // let minutes = today.getMinutes(); // 분 * 60 * 1000
+      // let seconds = today.getSeconds(); // 초 * 1000
+      // let milliseconds = today.getMilliseconds(); // 밀리초
+      
+      // const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+      const timestamp = Date.now();
+      // console.log("send time: ", data.time);
+      // console.log("receive time: ", timestamp);
+      console.log("duration: ", timestamp - first);
       cnt = 0;
-      total = 0;
     }
     // data.clientX = data.clientX * canvasRef.current.offsetWidth;
     // data.clientY = data.clientY * canvasRef.current.offsetHeight;
     if (canvasRef.current.offsetWidth - 25 > data.clientX) {
-      modifyMouse(data);
+      // modifyMouse(data);
     }
     // modifyMouse(data);
   };
@@ -100,9 +113,9 @@ const DressRoom = (props) => {
          * 동진 : object가 JSON.stringfy()를 하면서 데이터가 유실될 가능성에 대해 찾아보자!
          */
         canvas.getObjects().forEach((object) => {
-          console.log('data : ', data);
+          // console.log('data : ', data);
           if (object.id === data.id) {
-            console.log('obj : ', object);
+            // console.log('obj : ', object);
             canvas.remove(object);
           }
         });
@@ -161,21 +174,21 @@ const DressRoom = (props) => {
       isDrawingMode: false,
     });
 
-
-  async function test () {
+  async function test() {
     //-------- test ------------------
-    for (let index = 0; index < 100000; index++) {
-      let today = new Date();   
-      let hours = today.getHours(); // 시 * 60 * 60 * 1000
-      let minutes = today.getMinutes();  // 분 * 60 * 1000
-      let seconds = today.getSeconds();  // 초 * 1000
-      let milliseconds = today.getMilliseconds(); // 밀리초
+    // let today = new Date();
+    // let hours = today.getHours(); // 시 * 60 * 60 * 1000
+    // let minutes = today.getMinutes(); // 분 * 60 * 1000
+    // let seconds = today.getSeconds(); // 초 * 1000
+    // let milliseconds = today.getMilliseconds(); // 밀리초
 
-      const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
+    // const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+    const timestamp = Date.now();
+    for (let index = 0; index < 10000; index++) {
       const mouseobj = {
         clientX: 0,
         clientY: 0,
-        time: timestamp
+        time: timestamp,
       };
       mouseChannel.current.send(JSON.stringify(mouseobj));
       // emitMouse(mouseobj, socketRef.current);
@@ -184,7 +197,7 @@ const DressRoom = (props) => {
   }
 
   useEffect(async () => {
-    console.log('useEffect []');
+    // console.log('useEffect []');
 
     const canvasHeight = canvasRef.current.offsetHeight - 1;
     const canvasWidth = canvasRef.current.offsetWidth - 1;
@@ -196,7 +209,7 @@ const DressRoom = (props) => {
     await navigator.mediaDevices
       .getUserMedia({ audio: true, video: true }) // 사용자의 media data를 stream으로 받아옴(video, audio)
       .then((stream) => {
-        console.log('rtc socket');
+        // console.log('rtc socket');
         userVideo.current.srcObject = stream; // video player에 그 stream을 설정함
         userStream.current = stream; // userStream이라는 변수에 stream을 담아놓음
         socketRef.current = io.connect('/');
@@ -241,10 +254,10 @@ const DressRoom = (props) => {
     axios
       .get(`/privatebasket/${token}`)
       .then((Response) => {
-        console.log(Response);
+        // console.log(Response);
         setProducts(Response.data);
-        console.log('axios get products :', products);
-        console.log('axios get Response :', Response.data);
+        // console.log('axios get products :', products);
+        // console.log('axios get Response :', Response.data);
 
         let shops = Response.data.reduce((acc, cv) => {
           acc = acc.concat(cv.shop_name);
@@ -257,13 +270,13 @@ const DressRoom = (props) => {
       })
       .then(() => {
         setIsLoading(false);
-        console.log('products : ', products);
-        console.log('uniqueShops : ', uniqueShops);
+        // console.log('products : ', products);
+        // console.log('uniqueShops : ', uniqueShops);
       });
   }, []);
 
   useEffect(() => {
-    console.log('useEffect canvas');
+    // console.log('useEffect canvas');
     if (canvas) {
       canvas.on('selection:cleared', (opt) => {
         console.log('selection:cleared', canvas.getActiveObjects(), opt);
@@ -357,15 +370,13 @@ const DressRoom = (props) => {
         */
         try {
           mouseobj.id = socketRef.current.id;
-          let today = new Date();   
+          let today = new Date();
           let hours = today.getHours(); // 시
-          let minutes = today.getMinutes();  // 분
-          let seconds = today.getSeconds();  // 초
+          let minutes = today.getMinutes(); // 분
+          let seconds = today.getSeconds(); // 초
           let milliseconds = today.getMilliseconds(); // 밀리초
 
-          
-          const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
-          console.log("출발!!",timestamp);
+          const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
           mouseobj.time = timestamp;
           mouseChannel.current.send(JSON.stringify(mouseobj));
         } catch (error) {
@@ -383,7 +394,7 @@ const DressRoom = (props) => {
         opt.e.stopPropagation();
       });
 
-      console.log('canvas socket:', socketRef.current);
+      // console.log('canvas socket:', socketRef.current);
     }
   }, [canvas]);
 
@@ -392,7 +403,7 @@ const DressRoom = (props) => {
     e.preventDefault();
     let url;
 
-    console.log('add image', item);
+    // console.log('add image', item);
 
     if (item.removedBgImg) {
       url = item.removedBgImg;
@@ -401,8 +412,8 @@ const DressRoom = (props) => {
     }
 
     new fabric.Image.fromURL(url, (img) => {
-      console.log(img);
-      console.log('sender', img._element.currentSrc);
+      // console.log(img);
+      // console.log('sender', img._element.currentSrc);
       img.set({
         id: uuid(),
         product_info: item,
@@ -413,7 +424,7 @@ const DressRoom = (props) => {
         transparentCorners: false,
       });
 
-      console.log('new_img', img);
+      // console.log('new_img', img);
       const sendObj = {
         obj: img,
         order: 'add',
@@ -436,7 +447,7 @@ const DressRoom = (props) => {
 
   const HandleDeleteCanvasBtn = () => {
     canvas.getActiveObjects().forEach((obj) => {
-      console.log('HandleDeleteBtn : ', obj);
+      // console.log('HandleDeleteBtn : ', obj);
       try {
         itemChannel.current.send(JSON.stringify({ obj: obj, id: obj.id, order: 'delete' }));
       } catch (error) {
@@ -532,8 +543,8 @@ const DressRoom = (props) => {
   const handleRecieveCall = async (incoming) => {
     peerRef.current = createPeer();
     peerRef.current.addEventListener('datachannel', (event) => {
-      console.log('event : ', event);
-      console.log('event channel: ', event.channel);
+      // console.log('event : ', event);
+      // console.log('event channel: ', event.channel);
 
       switch (event.channel.label) {
         case 'mouse':
@@ -657,10 +668,10 @@ const DressRoom = (props) => {
   };
 
   const HandleAddtoMyCartBtn = () => {
-    console.log('HandleAddToMyCartBtn ');
+    // console.log('HandleAddToMyCartBtn ');
 
     canvas.getActiveObjects().forEach((obj) => {
-      console.log('add to my cart : ', obj);
+      // console.log('add to my cart : ', obj);
 
       axios
         .post(`/privatebasket`, {
@@ -668,8 +679,8 @@ const DressRoom = (props) => {
           products: [obj.product_info],
         })
         .then((Response) => {
-          // Response가 정상일때 products에 상품을 추가한다.
-          console.log(Response);
+          // // Response가 정상일때 products에 상품을 추가한다.
+          // console.log(Response);
           if (Response.status === 200) {
             setProducts([...products, obj.product_info]);
           }
@@ -681,7 +692,7 @@ const DressRoom = (props) => {
     axios
       .delete(`/privatebasket/product`, { data: { token, shop_url } })
       .then(function (response) {
-        console.log(response);
+        // console.log(response);
         setProducts(products?.filter((product) => product.shop_url !== shop_url));
       })
       .catch(function (error) {
@@ -773,7 +784,7 @@ const DressRoom = (props) => {
               </button>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img src="/images/logo_clothes.png" alt="모바 로고"></img>
+              <img src='/images/logo_clothes.png' alt='모바 로고'></img>
               <div style={{ fontSize: '25px', margin: '10px' }}>ㅁㅁㅁ 님의 코디룸</div>
             </div>
             <button className={styles.copyBtn} onClick={copyLink}>
@@ -788,7 +799,7 @@ const DressRoom = (props) => {
                 <div className={styles.sidebarTop}>
                   {/* <div className={styles.shrinkBtn} ref={shrinkBtnRef} onClick={handleShrinkBtn}> */}
                   <div ref={shrinkBtnRef} onClick={handleShrinkBtn}>
-                    <BiChevronLeft className={styles.chevronIcon} size="40" />
+                    <BiChevronLeft className={styles.chevronIcon} size='40' />
                   </div>
                 </div>
 
@@ -797,8 +808,8 @@ const DressRoom = (props) => {
                     {products.map((item, index) => (
                       <div className={styles.tooltipElement} key={index}>
                         <div className={styles.productBox}>
-                          <img onClick={(e) => HandleAddImgBtn(e, item, canvas)} className={styles.newProductImg} src={item.img} alt="상품 이미지" />
-                          <AiFillPlusCircle onClick={(e) => HandleAddImgBtn(e, item, canvas)} className={styles.addProductIcon} color="orange" size="50" />
+                          <img onClick={(e) => HandleAddImgBtn(e, item, canvas)} className={styles.newProductImg} src={item.img} alt='상품 이미지' />
+                          <AiFillPlusCircle onClick={(e) => HandleAddImgBtn(e, item, canvas)} className={styles.addProductIcon} color='orange' size='50' />
                           <div className={styles.hide + ' ' + styles.info}>
                             <ImCross onClick={(e) => HandleDeleteProductBtn(item.shop_url)} className={styles.removeProductIcon} />
                             <div>
@@ -816,21 +827,21 @@ const DressRoom = (props) => {
 
               <div ref={canvasRef} className={styles.canvasContainer}>
                 <div className={styles.toolbar}>
-                  <button type="button" className={styles.toolbarBtn} name="delete" onClick={HandleDeleteCanvasBtn}>
-                    <BsTrash size="30" />
+                  <button type='button' className={styles.toolbarBtn} name='delete' onClick={HandleDeleteCanvasBtn}>
+                    <BsTrash size='30' />
                   </button>
                   <button className={styles.toolbarBtn} onClick={HandleAddtoMyCartBtn}>
-                    <MdAddShoppingCart size="30" />
+                    <MdAddShoppingCart size='30' />
                   </button>
                   <button className={styles.toolbarBtn} onClick={DrawingFalse}>
-                    <BsHandIndexThumb size="30" />
+                    <BsHandIndexThumb size='30' />
                   </button>
                   <button className={styles.toolbarBtn} onClick={HandleDrawing}>
-                    <BsPencilFill size="30" />
+                    <BsPencilFill size='30' />
                   </button>
                 </div>
                 <ToastContainer
-                  position="bottom-center"
+                  position='bottom-center'
                   autoClose={3000}
                   hideProgressBar={false}
                   newestOnTop={false}
@@ -840,8 +851,8 @@ const DressRoom = (props) => {
                   draggable
                   pauseOnHover
                 />
-                <div id="pointers" className={styles.pointers}></div>
-                <canvas className={styles.canvas} id="canvas"></canvas>
+                <div id='pointers' className={styles.pointers}></div>
+                <canvas className={styles.canvas} id='canvas'></canvas>
               </div>
             </div>
           </div>
@@ -849,7 +860,7 @@ const DressRoom = (props) => {
           <div ref={videoContainerRef} className={styles.sidebarB}>
             <div className={styles.video_container}>
               <div className={styles.user1}>
-                <video autoPlay ref={userVideo} className={styles.video} muted="muted" poster="/images/user1.png">
+                <video autoPlay ref={userVideo} className={styles.video} muted='muted' poster='/images/user1.png'>
                   video 1
                 </video>
                 <div className={styles.control_box1}>
@@ -867,7 +878,7 @@ const DressRoom = (props) => {
                   </button>
                 </div>
               </div>
-              <video id="muteCtrl" autoPlay ref={partnerVideo} className={styles.video} poster="/images/user1.png">
+              <video id='muteCtrl' autoPlay ref={partnerVideo} className={styles.video} poster='/images/user1.png'>
                 video 2
               </video>
             </div>
