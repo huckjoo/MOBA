@@ -158,7 +158,11 @@ const DressRoom = (props) => {
         }, 3000);
         break;
       case 'selected':
-        if (data.obj.stroke === '#b33030') {
+        const activeID = canvas.getActiveObjects().map((object) => {
+          return object.id;
+        });
+        // data.obj.stroke === '#b33030' ||
+        if ( activeID.includes(data.id)) {
           // 이미 내가 선택하고 있는 상품이면
           canvas.getObjects().forEach((obj) => {
             if (obj.id === data.id) {
