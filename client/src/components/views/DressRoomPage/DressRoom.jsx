@@ -1,24 +1,24 @@
-import React, { useEffect, useState, useRef } from "react";
-import { fabric } from "fabric";
-import { v1 as uuid } from "uuid";
-import io from "socket.io-client";
-import { useHistory, useParams, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import Cookies from "universal-cookie";
-import { emitMouse, emitModify, emitAdd, modifyObj, addObj, modifyMouse, getPointer, socketConnect, deleteMouse } from "./socket";
+import React, { useEffect, useState, useRef } from 'react';
+import { fabric } from 'fabric';
+import { v1 as uuid } from 'uuid';
+import io from 'socket.io-client';
+import { useHistory, useParams, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import { emitMouse, emitModify, emitAdd, modifyObj, addObj, modifyMouse, getPointer, socketConnect, deleteMouse } from './socket';
 
-import styles from "./DressRoom.module.css";
+import styles from './DressRoom.module.css';
 
-import { BsCameraVideoFill, BsCameraVideoOffFill } from "react-icons/bs";
-import { BsFillMicFill, BsFillMicMuteFill } from "react-icons/bs";
-import { GoUnmute, GoMute } from "react-icons/go";
-import ClothesLoading from "../../loading/ClothesLoading";
-import { Helmet } from "react-helmet";
+import { BsCameraVideoFill, BsCameraVideoOffFill } from 'react-icons/bs';
+import { BsFillMicFill, BsFillMicMuteFill } from 'react-icons/bs';
+import { GoUnmute, GoMute } from 'react-icons/go';
+import ClothesLoading from '../../loading/ClothesLoading';
+import { Helmet } from 'react-helmet';
 
-const DressRoom = props => {
-  const [canvas, setCanvas] = useState("");
+const DressRoom = (props) => {
+  const [canvas, setCanvas] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
@@ -42,38 +42,38 @@ const DressRoom = props => {
     const cookies = new Cookies();
     return cookies.get(name);
   }
-  const token = getCookie("x_auth");
+  const token = getCookie('x_auth');
 
   const initCanvas = (width, height) =>
-    new fabric.Canvas("canvas", {
+    new fabric.Canvas('canvas', {
       width: width,
       height: height,
-      backgroundColor: "pink",
+      backgroundColor: 'pink',
     });
 
-  async function test () {
-      //-------- test ------------------
-      for (let index = 0; index < 100000; index++) {
-        let today = new Date();   
-        let hours = today.getHours(); // 시 * 60 * 60 * 1000
-        let minutes = today.getMinutes();  // 분 * 60 * 1000
-        let seconds = today.getSeconds();  // 초 * 1000
-        let milliseconds = today.getMilliseconds(); // 밀리초
+  async function test() {
+    //-------- test ------------------
+    for (let index = 0; index < 100; index++) {
+      let today = new Date();
+      let hours = today.getHours(); // 시 * 60 * 60 * 1000
+      let minutes = today.getMinutes(); // 분 * 60 * 1000
+      let seconds = today.getSeconds(); // 초 * 1000
+      let milliseconds = today.getMilliseconds(); // 밀리초
 
-        const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
-        const mouseobj = {
-          clientX: 0,
-          clientY: 0,
-          time: timestamp
-        };
-        emitMouse(mouseobj, socketRef.current);
-      }
-      // ----------------------------------
+      const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+      const mouseobj = {
+        clientX: 0,
+        clientY: 0,
+        time: timestamp,
+      };
+      emitMouse(mouseobj, socketRef.current);
+    }
+    // ----------------------------------
   }
 
   useEffect(() => {
     // setIsLoading(true);
-    socketRef.current = io.connect("/");
+    socketRef.current = io.connect('/');
 
     const canvasWidth = canvasRef.current.offsetWidth;
     const canvasHeight = canvasRef.current.offsetHeight;
@@ -85,31 +85,31 @@ const DressRoom = props => {
 
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: true }) // 사용자의 media data를 stream으로 받아옴(video, audio)
-      .then(stream => {
-        console.log("rtc socket");
+      .then((stream) => {
+        // console.log("rtc socket");
         userVideo.current.srcObject = stream; // video player에 그 stream을 설정함
         userStream.current = stream; // userStream이라는 변수에 stream을 담아놓음
-        socketRef.current.emit("join room", roomID); // roomID를 join room을 통해 server로 전달함
-        socketRef.current.on("other user", userID => {
+        socketRef.current.emit('join room', roomID); // roomID를 join room을 통해 server로 전달함
+        socketRef.current.on('other user', (userID) => {
           callUser(userID);
           otherUser.current = userID;
         });
-        socketRef.current.on("user joined", userID => {
+        socketRef.current.on('user joined', (userID) => {
           otherUser.current = userID;
         });
-        socketRef.current.on("offer", handleRecieveCall);
-        socketRef.current.on("answer", handleAnswer);
-        socketRef.current.on("ice-candidate", handleNewICECandidateMsg);
+        socketRef.current.on('offer', handleRecieveCall);
+        socketRef.current.on('answer', handleAnswer);
+        socketRef.current.on('ice-candidate', handleNewICECandidateMsg);
       });
 
     setIsLoading(false);
     axios
       .get(`/privatebasket/${token}`)
-      .then(Response => {
-        console.log(Response);
+      .then((Response) => {
+        // console.log(Response);
         setProducts(Response.data);
       })
-      .catch(Error => {
+      .catch((Error) => {
         console.log(Error);
       })
       .then(() => {
@@ -119,7 +119,7 @@ const DressRoom = props => {
 
   useEffect(() => {
     if (canvas) {
-      canvas.on("object:modified", function (options) {
+      canvas.on('object:modified', function (options) {
         if (options.target) {
           const modifiedObj = {
             obj: options.target,
@@ -129,7 +129,7 @@ const DressRoom = props => {
         }
       });
 
-      canvas.on("object:moving", function (options) {
+      canvas.on('object:moving', function (options) {
         if (options.target) {
           const modifiedObj = {
             obj: options.target,
@@ -139,23 +139,23 @@ const DressRoom = props => {
         }
       });
 
-      canvas.on("mouse:move", function (options) {
-        let today = new Date();   
+      canvas.on('mouse:move', function (options) {
+        let today = new Date();
         let hours = today.getHours(); // 시 * 60 * 60 * 1000
-        let minutes = today.getMinutes();  // 분 * 60 * 1000
-        let seconds = today.getSeconds();  // 초 * 1000
+        let minutes = today.getMinutes(); // 분 * 60 * 1000
+        let seconds = today.getSeconds(); // 초 * 1000
         let milliseconds = today.getMilliseconds(); // 밀리초
 
-        const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
+        const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
         const mouseobj = {
           clientX: options.e.clientX,
           clientY: options.e.clientY,
-          time: timestamp
+          time: timestamp,
         };
         emitMouse(mouseobj, socketRef.current);
       });
 
-      console.log("canvas socket:", socketRef.current);
+      // console.log("canvas socket:", socketRef.current);
       modifyObj(canvas, socketRef.current);
       addObj(canvas, socketRef.current);
       modifyMouse(canvas, socketRef.current);
@@ -167,17 +167,17 @@ const DressRoom = props => {
     let type = e.target.name;
     let object;
 
-    if (type === "rectangle") {
+    if (type === 'rectangle') {
       object = new fabric.Rect({
         height: 75,
         width: 150,
       });
-    } else if (type === "triangle") {
+    } else if (type === 'triangle') {
       object = new fabric.Triangle({
         width: 100,
         height: 100,
       });
-    } else if (type === "circle") {
+    } else if (type === 'circle') {
       object = new fabric.Circle({
         radius: 50,
       });
@@ -185,16 +185,16 @@ const DressRoom = props => {
 
     object.set({ id: uuid() });
     canvas.add(object);
-    console.log(object);
+    // console.log(object);
     emitAdd({ obj: object, id: object.id }, socketRef.current);
     canvas.renderAll();
   };
 
   const addImg = (e, url, canvi) => {
     e.preventDefault();
-    new fabric.Image.fromURL(url, img => {
-      console.log(img);
-      console.log("sender", img._element.currentSrc);
+    new fabric.Image.fromURL(url, (img) => {
+      // console.log(img);
+      // console.log("sender", img._element.currentSrc);
       img.set({ id: uuid() });
       emitAdd({ obj: img, id: img.id, url: img._element.currentSrc }, socketRef.current);
       img.scale(0.75);
@@ -204,24 +204,22 @@ const DressRoom = props => {
   };
 
   const deleteShape = () => {
-    console.log(
-      canvas.getActiveObjects().forEach(obj => {
-        canvas.remove(obj);
-      })
-    );
+    canvas.getActiveObjects().forEach((obj) => {
+      canvas.remove(obj);
+    });
     // canvas.discardActiveObject().renderAll();
   };
 
   // ---------- 카카오톡 공유하기 ----------
   useEffect(() => {
-    window.Kakao.init("c45ed7c54965b8803ada1b6e2f293f4f");
+    window.Kakao.init('c45ed7c54965b8803ada1b6e2f293f4f');
   }, []);
 
   function copyLink() {
     let currentUrl = window.document.location.href; //복사 잘됨
     navigator.clipboard.writeText(currentUrl);
-    toast.success("초대링크 복사 완료!", {
-      position: "bottom-center",
+    toast.success('초대링크 복사 완료!', {
+      position: 'bottom-center',
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -232,18 +230,18 @@ const DressRoom = props => {
 
     const shareKakao = () => {
       window.Kakao.Link.sendDefault({
-        objectType: "feed",
+        objectType: 'feed',
         content: {
-          title: "모바",
-          description: "친구랑 코디하기",
-          imageUrl: "#",
+          title: '모바',
+          description: '친구랑 코디하기',
+          imageUrl: '#',
           link: {
             webUrl: window.location.href,
           },
         },
         buttons: [
           {
-            title: "웹으로 이동",
+            title: '웹으로 이동',
             link: {
               webUrl: window.location.href,
             },
@@ -285,19 +283,19 @@ const DressRoom = props => {
   function callUser(userID) {
     peerRef.current = createPeer(userID);
     //senders에 넣어준다 - 중요!
-    userStream.current.getTracks().forEach(track => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
+    userStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
   }
 
   function createPeer(userID) {
     const peer = new RTCPeerConnection({
       iceServers: [
         {
-          urls: "stun:stun.stunprotocol.org",
+          urls: 'stun:stun.stunprotocol.org',
         },
         {
-          urls: "turn:numb.viagenie.ca",
-          credential: "muazkh",
-          username: "webrtc@live.com",
+          urls: 'turn:numb.viagenie.ca',
+          credential: 'muazkh',
+          username: 'webrtc@live.com',
         },
       ],
     });
@@ -312,7 +310,7 @@ const DressRoom = props => {
   function handleNegotiationNeededEvent(userID) {
     peerRef.current
       .createOffer()
-      .then(offer => {
+      .then((offer) => {
         return peerRef.current.setLocalDescription(offer);
       })
       .then(() => {
@@ -321,9 +319,9 @@ const DressRoom = props => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         };
-        socketRef.current.emit("offer", payload);
+        socketRef.current.emit('offer', payload);
       })
-      .catch(e => console.log(e));
+      .catch((e) => console.log(e));
   }
 
   function handleRecieveCall(incoming) {
@@ -332,12 +330,12 @@ const DressRoom = props => {
     peerRef.current
       .setRemoteDescription(desc)
       .then(() => {
-        userStream.current.getTracks().forEach(track => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
+        userStream.current.getTracks().forEach((track) => senders.current.push(peerRef.current.addTrack(track, userStream.current)));
       })
       .then(() => {
         return peerRef.current.createAnswer();
       })
-      .then(answer => {
+      .then((answer) => {
         return peerRef.current.setLocalDescription(answer);
       })
       .then(() => {
@@ -346,13 +344,13 @@ const DressRoom = props => {
           caller: socketRef.current.id,
           sdp: peerRef.current.localDescription,
         };
-        socketRef.current.emit("answer", payload);
+        socketRef.current.emit('answer', payload);
       });
   }
 
   function handleAnswer(message) {
     const desc = new RTCSessionDescription(message.sdp);
-    peerRef.current.setRemoteDescription(desc).catch(e => console.log(e));
+    peerRef.current.setRemoteDescription(desc).catch((e) => console.log(e));
   }
 
   function handleICECandidateEvent(e) {
@@ -361,14 +359,14 @@ const DressRoom = props => {
         target: otherUser.current,
         candidate: e.candidate,
       };
-      socketRef.current.emit("ice-candidate", payload);
+      socketRef.current.emit('ice-candidate', payload);
     }
   }
 
   function handleNewICECandidateMsg(incoming) {
     const candidate = new RTCIceCandidate(incoming);
 
-    peerRef.current.addIceCandidate(candidate).catch(e => console.log(e));
+    peerRef.current.addIceCandidate(candidate).catch((e) => console.log(e));
   }
 
   function handleTrackEvent(e) {
@@ -408,19 +406,19 @@ const DressRoom = props => {
             <div>공유하기 혹은 추출하기가 들어갈 자리</div>
           </header>
           <div className={styles.toolbar}>
-            <button type="button" name="rectangle" onClick={addShape}>
+            <button type='button' name='rectangle' onClick={addShape}>
               Add a Rectangle
             </button>
 
-            <button type="button" name="triangle" onClick={addShape}>
+            <button type='button' name='triangle' onClick={addShape}>
               Add a Triangle
             </button>
 
-            <button type="button" name="circle" onClick={addShape}>
+            <button type='button' name='circle' onClick={addShape}>
               Add a Circle
             </button>
 
-            <button type="button" name="delete" onClick={deleteShape}>
+            <button type='button' name='delete' onClick={deleteShape}>
               삭제하기
             </button>
             <button className={styles.copyBtn} onClick={copyLink}>
@@ -431,7 +429,7 @@ const DressRoom = props => {
             </button> */}
 
             <ToastContainer
-              position="bottom-center"
+              position='bottom-center'
               autoClose={3000}
               hideProgressBar={false}
               newestOnTop={false}
@@ -450,12 +448,12 @@ const DressRoom = props => {
                   <div key={index} className={styles.containerProduct}>
                     <div className={styles.producctInfo}>
                       <div className={styles.containerImg}>
-                        <img className={styles.productImg} src={item.img} alt="상품 이미지" />
+                        <img className={styles.productImg} src={item.img} alt='상품 이미지' />
                       </div>
                       <div className={styles.productTitle}>{item.product_name}</div>
                     </div>
                     <div>
-                      <button className={styles.productAddbtn} type="button" onClick={e => addImg(e, item.img, canvas)}>
+                      <button className={styles.productAddbtn} type='button' onClick={(e) => addImg(e, item.img, canvas)}>
                         추가
                       </button>
                     </div>
@@ -465,8 +463,8 @@ const DressRoom = props => {
             </div>
           </div>
           <div ref={canvasRef} className={styles.main}>
-            <div id="pointers"></div>
-            <canvas className={styles.canvas} id="canvas" />
+            <div id='pointers'></div>
+            <canvas className={styles.canvas} id='canvas' />
           </div>
           <div className={styles.sidebarB}>
             <div className={styles.video_container}>

@@ -1,5 +1,5 @@
-import io from "socket.io-client";
-import { fabric } from "fabric";
+import io from 'socket.io-client';
+import { fabric } from 'fabric';
 
 let prev;
 let canvas;
@@ -14,23 +14,23 @@ function now() {
 }
 
 export const socketConnect = () => {
-  const socket = io.connect("/");
+  const socket = io.connect('/');
   return socket;
 };
 
 // emitters
 export const emitAdd = (obj, socket) => {
-  socket.emit("object-added", obj);
+  socket.emit('object-added', obj);
 };
 
 export const emitModify = (obj, socket) => {
-  socket.emit("object-modified", obj);
+  socket.emit('object-modified', obj);
 };
 
 export const emitMouse = (obj, socket) => {
   // if (now() - lastEmit > 5) {
   // console.log("send", obj.clientX, obj.clientY);
-  socket.emit("mousemove", {
+  socket.emit('mousemove', {
     x: obj.clientX,
     y: obj.clientY,
     time: obj.time,
@@ -41,14 +41,14 @@ export const emitMouse = (obj, socket) => {
 
 // listeners
 export const addObj = (canvas, socket) => {
-  socket.off("new-add");
-  socket.on("new-add", data => {
+  socket.off('new-add');
+  socket.on('new-add', (data) => {
     const { obj, id, url } = data;
     let object;
 
     console.log(obj.type);
 
-    if (obj.type === "rect") {
+    if (obj.type === 'rect') {
       object = new fabric.Rect({
         height: obj.height,
         width: obj.width,
@@ -56,9 +56,9 @@ export const addObj = (canvas, socket) => {
       object.set({ id: id });
       canvas.add(object);
       canvas.renderAll();
-    } else if (obj.type === "image") {
-      new fabric.Image.fromURL(url, img => {
-        console.log("receive", img._element.currentSrc);
+    } else if (obj.type === 'image') {
+      new fabric.Image.fromURL(url, (img) => {
+        console.log('receive', img._element.currentSrc);
         img.set({ id: id });
         img.scale(0.75);
         canvas.add(img);
@@ -69,9 +69,9 @@ export const addObj = (canvas, socket) => {
 };
 
 export const modifyObj = (canvas, socket) => {
-  socket.on("new-modification", data => {
+  socket.on('new-modification', (data) => {
     const { obj, id } = data;
-    canvas.getObjects().forEach(object => {
+    canvas.getObjects().forEach((object) => {
       if (object.id === id) {
         object.set(obj);
         object.setCoords();
@@ -81,37 +81,40 @@ export const modifyObj = (canvas, socket) => {
   });
 };
 
-let total = 0
-let count = 0
+
+let count = 0;
+let realTotal = [0,0];
 export const modifyMouse = (canvas, socket) => {
-  socket.on("moving", function (data) {
-    let today = new Date();   
+  socket.on('moving', function (data) {
+    let today = new Date();
     let hours = today.getHours(); // 시 * 60 * 60 * 1000
-    let minutes = today.getMinutes();  // 분 * 60 * 1000
-    let seconds = today.getSeconds();  // 초 * 1000
+    let minutes = today.getMinutes(); // 분 * 60 * 1000
+    let seconds = today.getSeconds(); // 초 * 1000
     let milliseconds = today.getMilliseconds(); // 밀리초
 
-    const timestamp = (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds);
-    total += timestamp - data.time
-    count += 1
+    const timestamp = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000 + milliseconds;
 
-    // console.log("도착!!", timestamp - data.time, total);
-    if (count >= 100000) {
-      console.log("avg: ", total/count);
+    count += 1;
+    
+    realTotal[0] += 1;
+    realTotal[1] += timestamp - data.time;
+    
+
+    if (count === 1000) {
+      console.log("realTotal: ",realTotal, realTotal[1]/realTotal[0]);
       count = 0;
-      total = 0;
     }
 
     if (!clients.hasOwnProperty(data.id)) {
       pointers[data.id] = pointerContainer.appendChild(pointer.cloneNode());
     }
 
-    pointers[data.id].style.left = data.x + "px";
-    pointers[data.id].style.top = data.y + "px";
-    pointers[data.id].style.position = "absolute";
-    pointers[data.id].style.width = "15px";
-    pointers[data.id].style.height = "22px";
-    pointers[data.id].src = "https://uploads.codesandbox.io/uploads/user/88acfe5a-77fc-498c-98ee-d1b0b303f6a8/tC4n-pointer.png";
+    pointers[data.id].style.left = data.x + 'px';
+    pointers[data.id].style.top = data.y + 'px';
+    pointers[data.id].style.position = 'absolute';
+    pointers[data.id].style.width = '15px';
+    pointers[data.id].style.height = '22px';
+    pointers[data.id].src = 'https://uploads.codesandbox.io/uploads/user/88acfe5a-77fc-498c-98ee-d1b0b303f6a8/tC4n-pointer.png';
 
     pointers[data.id].style.zIndex = 20;
 
@@ -128,18 +131,18 @@ export const getPointer = () => {
   // const url = window.location.origin;
   prev = {};
   // console.log(document);
-  canvas = document.getElementById("canvas");
+  canvas = document.getElementById('canvas');
   // console.log("canvas", canvas);
-  pointerContainer = document.getElementById("pointers");
+  pointerContainer = document.getElementById('pointers');
   // console.log(pointerContainer);
-  pointer = document.createElement("img");
-  pointer.setAttribute("class", "pointer");
+  pointer = document.createElement('img');
+  pointer.setAttribute('class', 'pointer');
 
   lastEmit = now();
 };
 
-export const deleteMouse = async id => {
-  console.log("disconnected", pointers[id]);
+export const deleteMouse = async (id) => {
+  console.log('disconnected', pointers[id]);
   delete clients[id];
   if (pointers[id]) {
     try {
