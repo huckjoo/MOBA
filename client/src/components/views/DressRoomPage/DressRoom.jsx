@@ -959,17 +959,17 @@ const DressRoom = (props) => {
                 draggable: true,
                 progress: undefined,
               });
-            } else if (Response.status === 202) {
-              toast.warn('중복된 상품입니다.', {
-                position: 'top-center',
-                autoClose: 1500,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-              });
             }
+          }).catch((Error) => {
+            toast.warn('중복된 상품입니다.', {
+              position: 'top-center',
+              autoClose: 1500,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            });
           });
       }
     });
