@@ -251,7 +251,11 @@ const DressRoom = (props) => {
   });
 
   const throttled = useCallback(
-    throttle((mouseChannel, mouseobj) => mouseChannel.current.send(JSON.stringify(mouseobj)), 16),
+    throttle((mouseChannel, mouseobj) => {
+      try {
+        mouseChannel.current.send(JSON.stringify(mouseobj));
+      } catch {}
+    }, 16),
     []
   );
 
